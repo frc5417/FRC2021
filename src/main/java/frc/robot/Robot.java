@@ -50,6 +50,7 @@ public class Robot extends TimedRobot {
   public NetworkTableEntry ta = table.getEntry("ta");
   public NetworkTableEntry ts = table.getEntry("ts");
   public NetworkTableEntry ledMode = table.getEntry("ledMode");
+  public NetworkTableEntry stream = table.getEntry("stream");
 
   public static Limelight limelight = new Limelight();
   public static Joystick pad = new Joystick(0);
@@ -68,7 +69,7 @@ public class Robot extends TimedRobot {
   public static Command shift = new Shift(drive);
   public static Command shoot = new Shoot(intake);
   public static Command intakeSystem = new RunIntakeSystem(intake);
-  public static Command moveTurret = new MoveTurret(turret);
+  public static Command moveTurret = new SetTurret(turret);
   public static TrajectoryFollowing trajectoryFollowing = new TrajectoryFollowing();
   public static Compressor compressor;
   
@@ -80,6 +81,7 @@ public class Robot extends TimedRobot {
     m_chooser.setDefaultOption("Default Auto", kDefaultAuto);
     m_chooser.addOption("My Auto", kCustomAuto);
     SmartDashboard.putData("Auto choices", m_chooser);
+    
 
     //compressor = new Compressor(0);
     //compressor.clearAllPCMStickyFaults();
@@ -99,10 +101,13 @@ public class Robot extends TimedRobot {
   @Override
   public void robotPeriodic() {
 
+    //System.out.println("Feeder Light value: " + intake.ballFeederCounter.get());
+    //System.out.println("Internal Light value: " + intake.ballInternalCounter.get());
     limelight.setX(tx);
     limelight.setY(ty);
     limelight.setArea(ta);
     limelight.setV(tv);
+    stream.setNumber(2);
 
   }
 
@@ -121,6 +126,7 @@ public class Robot extends TimedRobot {
   public void autonomousInit() {
     trajectoryFollowing.zeroHeading();
     trajectoryFollowing.resetEncoders();
+    turret.moveTurret(true, false);
 
     //autonomous = robotContainer.getAutonomousCommand();
     autonomous = new SequentialCommandGroup(new AutoAlign(limelight), new AutoShoot(intake));
@@ -148,7 +154,8 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void teleopPeriodic() {
-    intake.count += 20;
+
+    //moveTurret.schedule();
     tankDrive.schedule();
     //align.schedule();
     climbL.schedule();
@@ -156,12 +163,17 @@ public class Robot extends TimedRobot {
     drive.shiftPiston(robotContainer.lBumper(), robotContainer.rBumper());
     drive.setDefaultCommand(tankDrive);
     robotContainer.aPad.whileHeld(align);
+    //intake.shoot(robotContainer.yButtonM());
+    /*
     if(robotContainer.yButtonM()){
       intake.shoot(robotContainer.yButtonM());
     }
     else{
-      intakeSystem.schedule();
+
     }
+    */
+    //shoot.schedule();
+    intakeSystem.schedule();
     //intakeForward.schedule();
     //intakeBackward.schedule();
 

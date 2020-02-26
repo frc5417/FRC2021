@@ -135,5 +135,10 @@ public class RobotContainer{
         return padManipulator.getRawButton(4);
     }
 
+    public boolean xButton(){
+        return pad.getRawButton(3);
+    }
+
+
 }
 

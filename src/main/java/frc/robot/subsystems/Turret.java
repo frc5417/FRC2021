@@ -14,7 +14,17 @@ public class Turret extends SubsystemBase{
         turret.setNeutralMode(NeutralMode.Coast);
     }
 
-    public void setTurretPower(double power){
-        turret.set(ControlMode.PercentOutput, power);
+    public void moveTurret(boolean forward, boolean back){
+        if(forward && back == false){
+            turret.set(ControlMode.Position, 0);
+        } else if(back && forward == false){
+            turret.set(ControlMode.Position, -10);
+        }
     }
+    public void turretBackward(boolean button){
+        if(button){
+            turret.set(ControlMode.Position, 0);
+        }
+    }
+
 }

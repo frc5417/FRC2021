@@ -19,6 +19,7 @@ import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import edu.wpi.first.wpilibj.DigitalInput;
+import frc.robot.Robot;
 
 //test7
 public class Intake extends SubsystemBase {
@@ -28,7 +29,7 @@ public class Intake extends SubsystemBase {
   //feel free to change these names, they might suck
 
     double intakeSpeed = .5;
-    double feederSpeed = .3;
+    double rollerSpeed = .5;
     public int count = 0;
     int ballInternalCount = 0;
     boolean ballInternalToggle = true;
@@ -36,17 +37,21 @@ public class Intake extends SubsystemBase {
     boolean ballFeederToggle = false;
     boolean feederFlag = true;
 
-    WPI_VictorSPX rollerBar = new WPI_VictorSPX(Constants.intakeRoller);//rollerbar               //ask build which ports theyll use
-    WPI_VictorSPX internalBelt = new WPI_VictorSPX(Constants.intakeMotorTop);//internal belt thing
-    WPI_VictorSPX feeder = new WPI_VictorSPX(Constants.intakeMotorBottom);//the one that puts it in the shooter
-    CANSparkMax masterShoot =  new CANSparkMax(Constants.shooterMaster, MotorType.kBrushless);
-    CANSparkMax slaveShoot =  new CANSparkMax(Constants.shooterSlave, MotorType.kBrushless);
-    DigitalInput ballInternalCounter = new DigitalInput(Constants.ballInternalCounterPort);
-    DigitalInput ballFeederCounter = new DigitalInput(Constants.ballFeederCounterPort);
+    public WPI_VictorSPX rollerBar;//rollerbar               //ask build which ports theyll use
+    public WPI_VictorSPX internalBelt;//internal belt thing
+    public WPI_VictorSPX feeder;//the one that puts it in the shooter
+    public CANSparkMax masterShoot =  new CANSparkMax(Constants.shooterMaster, MotorType.kBrushless);
+    public CANSparkMax slaveShoot =  new CANSparkMax(Constants.shooterSlave, MotorType.kBrushless);
+    public DigitalInput ballInternalCounter = new DigitalInput(Constants.ballInternalCounterPort);
+    public DigitalInput ballFeederCounter = new DigitalInput(Constants.ballFeederCounterPort);
     //Solenoid intakeSolenoid = new Solenoid(1);
     double setPoint;
     
     public Intake(){
+      rollerBar = new WPI_VictorSPX(Constants.intakeRoller);
+      internalBelt = new WPI_VictorSPX(Constants.intakeMotorTop);
+      feeder = new WPI_VictorSPX(Constants.intakeMotorBottom);
+
       rollerBar.setNeutralMode(NeutralMode.Coast);
       internalBelt.setNeutralMode(NeutralMode.Coast);
       feeder.setNeutralMode(NeutralMode.Coast);
@@ -73,9 +78,10 @@ public class Intake extends SubsystemBase {
       intakeSpeed = speed;
   }
 
-  public void runIntakeSystem(double buttonForward, double buttonBackward, boolean buttonIn, boolean buttonOut){ //runs rollerbar and 
+  public void runIntakeSystem(double buttonForward, double buttonBackward, boolean buttonIn, boolean buttonOut, boolean buttonShoot){//runs rollerbar and 
+
     if(buttonForward != 0 && buttonBackward == 0){
-      rollerBar.set(intakeSpeed);
+      rollerBar.set(rollerSpeed);
       /*if(ballFeederCounter.get()){
         ballInternalToggle = true;
       }
@@ -110,23 +116,40 @@ public class Intake extends SubsystemBase {
 
 
 
+
     }    
     else if(buttonBackward != 0 && buttonForward == 0){
-      rollerBar.set(-intakeSpeed);
+      rollerBar.set(-rollerSpeed);
       internalBelt.set(intakeSpeed);
       feeder.set(-intakeSpeed);
     }
     else if(buttonIn && buttonOut == false){
-      rollerBar.set(intakeSpeed);
+      rollerBar.set(rollerSpeed);
     }else if(buttonOut && buttonIn == false){
-      rollerBar.set(-intakeSpeed);
+      rollerBar.set(-rollerSpeed);
+    }
+    else if(buttonShoot){
+      /*masterShoot.set(-1);
+      slaveShoot.set(-1);*/
+            
+      System.out.println(masterShoot.getEncoder().getVelocity() + " Motor ID: 12");
+      //System.out.println(slaveShoot.getEncoder().getVelocity() + " Motor ID: 3");
+      masterShoot.getPIDController().setReference(setPoint, ControlType.kVelocity);
+      slaveShoot.follow(masterShoot);
+
+      if(masterShoot.getEncoder().getVelocity() <= (Constants.shootsetPointConstant + 500) && masterShoot.getEncoder().getVelocity() >= (Constants.shootsetPointConstant - 500)){
+        internalBelt.set(-intakeSpeed);
+        feeder.set(intakeSpeed);
+      }
     }
     else{
+      masterShoot.set(0);
+      masterShoot.getPIDController().setReference(0, ControlType.kVelocity);
+      //slaveShoot.set(0);
       rollerBar.set(0);
       internalBelt.set(0);
       feeder.set(0);
     }
-
 
   }
   public void deployPistons(boolean buttonDeploy, boolean buttonRetract){
@@ -157,14 +180,14 @@ public class Intake extends SubsystemBase {
   }
   public void runInternalBelt(boolean button){
     if(button){
-      internalBelt.set(intakeSpeed);
+      internalBelt.set(-intakeSpeed);
     }else{
       internalBelt.setNeutralMode(NeutralMode.Brake);
     }
   }
   public void runInternalBeltBackwards(boolean button){
     if(button){
-      internalBelt.set(-intakeSpeed);
+      internalBelt.set(intakeSpeed);
     }else{
       internalBelt.setNeutralMode(NeutralMode.Brake);
     }
@@ -172,7 +195,7 @@ public class Intake extends SubsystemBase {
 
   public void runFeeder(boolean button){
        if(button){
-           feeder.set(feederSpeed);
+           feeder.set(intakeSpeed);
        }else{
          feeder.setNeutralMode(NeutralMode.Brake);
        }
@@ -180,7 +203,7 @@ public class Intake extends SubsystemBase {
 
    public void runFeederBackwards(boolean button){
     if(button){
-      feeder.set(-feederSpeed);
+      feeder.set(-intakeSpeed);
     }else{
       feeder.setNeutralMode(NeutralMode.Brake);
     }
@@ -188,7 +211,6 @@ public class Intake extends SubsystemBase {
 
   public void shoot(boolean button){
     if(button){
-      
       /*masterShoot.set(-1);
       slaveShoot.set(-1);*/
             
@@ -199,11 +221,7 @@ public class Intake extends SubsystemBase {
 
       if(masterShoot.getEncoder().getVelocity() <= (Constants.shootsetPointConstant + 500) && masterShoot.getEncoder().getVelocity() >= (Constants.shootsetPointConstant - 500)){
         internalBelt.set(intakeSpeed);
-        feeder.follow(internalBelt);
-      }
-      else{
-        internalBelt.set(0);
-        feeder.set(0);
+        feeder.set(intakeSpeed);
       }
     }
     else{
@@ -223,8 +241,8 @@ public class Intake extends SubsystemBase {
       slaveShoot.follow(masterShoot);
 
       if(masterShoot.getEncoder().getVelocity() <= (Constants.shootsetPointConstant + 500) && masterShoot.getEncoder().getVelocity() >= (Constants.shootsetPointConstant - 500)){
-        internalBelt.set(intakeSpeed);
-        feeder.follow(internalBelt);
+        runInternalBelt(true);
+        runFeeder(true);
       }
       else{
         internalBelt.set(0);

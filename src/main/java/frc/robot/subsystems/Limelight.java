@@ -171,8 +171,8 @@ public class Limelight extends SubsystemBase {
         }
         
         distance_adjust = KpDistance * distance_error;
-        left_command += (steering_adjust + distance_adjust);
-        right_command += (distance_adjust - steering_adjust);
+        left_command += (steering_adjust - distance_adjust);
+        right_command += (distance_adjust + steering_adjust);
         /*left_command -= distance_adjust;
         right_command += distance_adjust;
         turret_command += steering_adjust;*/

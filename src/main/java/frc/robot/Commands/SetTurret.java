@@ -11,13 +11,13 @@ import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.*;
 import frc.robot.Robot;
 
-public class MoveTurret extends CommandBase {
+public class SetTurret extends CommandBase {
 
   private final Turret turret;
   /**
    * Creates a new MoveTurret.
    */
-  public MoveTurret(Turret subsystem) {
+  public SetTurret(Turret subsystem) {
     // Use addRequirements() here to declare subsystem dependencies.
     turret = subsystem;
     addRequirements(turret);
@@ -31,7 +31,7 @@ public class MoveTurret extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    Robot.turret.setTurretPower(Robot.robotContainer.turretSpeed());
+    Robot.turret.moveTurret(Robot.robotContainer.xButton(), Robot.robotContainer.yButton());
   }
 
   // Called once the command ends or is interrupted.

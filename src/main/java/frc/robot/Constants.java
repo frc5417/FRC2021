@@ -15,8 +15,8 @@ public class Constants {
     public static final int shooterMaster = 12;
     public static final int shooterSlave = 3;
     public static final int turretPort = 9;
-    public static final int ballInternalCounterPort = 0;
-    public static final int ballFeederCounterPort = 1;
+    public static final int ballInternalCounterPort = 1;
+    public static final int ballFeederCounterPort = 2;
 
     public static final double Kp = .05;
     public static final double min_command = .05; //real bot .1
@@ -44,11 +44,11 @@ public class Constants {
     // ideal distance 90 inches
 
     //Shooter Constants
-    public static final double shootkP = 9e-20; 
-    public static final double shootkI = 7e-52;
+    public static final double shootkP = -.09; //9e-20; 
+    public static final double shootkI = 0; //7e-52;
     public static final double shootkD = 0; 
     public static final double shootkIz = 0; 
-    public static final double shootkFF = 36e-9;  
+    public static final double shootkFF = 0.00000005; //add 5 
     public static final double shootkMaxOutput = 1; 
     public static final double shootkMinOutput = -1;
     public static final double shootMaxRPM = 5700;

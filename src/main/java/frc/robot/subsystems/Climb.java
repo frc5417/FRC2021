@@ -25,7 +25,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 import frc.robot.Constants;
-
+import frc.robot.Robot;
 
 public class Climb extends SubsystemBase {
     
@@ -106,18 +106,22 @@ public class Climb extends SubsystemBase {
       */
       if(buttonDirectionUp){
         climbPower = .5;
+        Robot.turret.turretBackward(true);
       }
       else if(buttonDirectionDown){
         climbPower = -.5;
+        Robot.turret.turretBackward(true);
       }
       if(buttonRight != 0){
         motorR.set(climbPower);
+        Robot.turret.turretBackward(true);
       }
       else{
         motorR.set(0);
       }
       if(buttonLeft != 0){
         motorL.set(climbPower);
+        Robot.turret.turretBackward(true);
       }
       else{
         motorL.set(0);
