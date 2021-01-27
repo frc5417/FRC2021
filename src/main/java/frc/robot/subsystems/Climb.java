@@ -23,6 +23,7 @@ package frc.robot.subsystems;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 import com.revrobotics.CANSparkMax;
+import com.revrobotics.ControlType;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 import frc.robot.Constants;
 import frc.robot.Robot;
@@ -34,53 +35,42 @@ public class Climb extends SubsystemBase {
     CANSparkMax motorR = new CANSparkMax(Constants.RClimb, MotorType.kBrushless);
     CANSparkMax motorL = new CANSparkMax(Constants.LClimb, MotorType.kBrushless);
 
-    boolean toggle;
+
+    boolean toggleR;
+    boolean toggleL;
     int count;
     double climbPower;
+    double climbRCenter;
+    double climbRLeft;
+    double climbRRight;
+    double climbLCenter;
+    double climbLLeft;
+    double climbLRight;
 
     public Climb(){
+      motorR.getPIDController().setP(Constants.climberkP);
+      motorR.getPIDController().setI(Constants.climberkI);
+      motorL.getPIDController().setP(Constants.climberkP);
+      motorL.getPIDController().setI(Constants.climberkI);
       motorR.setInverted(false);
       motorL.setInverted(true);
-      toggle = true;
+      toggleR = false;
+      toggleL = false;
       count = 0;
-      climbPower = -.5;
-
+      climbPower = .5;
+      motorR.setClosedLoopRampRate(1);
+      motorL.setClosedLoopRampRate(1);
+      climbRCenter = Constants.climberRCenter;
+      climbRRight = Constants.climberRRight;
+      climbRLeft = Constants.climberRLeft;
+      climbLCenter = Constants.climberLCenter;
+      climbLRight = Constants.climberLRight;
+      climbLLeft = Constants.climberLLeft;
+      motorR.getEncoder().setPosition(0);
+      motorL.getEncoder().setPosition(0);
     }
-/*
-    public void extend(boolean button)
-    {
-      if(button){
-        count+=1;
-      }
 
-      switch(count){
-        case 0:
-          toggle = 0;
-          break;
-        case 1:
-          toggle = 1;
-          break;
-        case 2:
-          toggle = 0;
-          count = 0;
-          break;
-      }
-      
-      switch(toggle){
-        case 0:
-          climbPistonL.set(false);
-          climbPistonR.set(false);
-          break;
-        case 1:
-          climbPistonL.set(true);
-          climbPistonR.set(true);
-          break;
-      }
-
-    }
-    */
-
-    public void latch(boolean buttonDirectionUp, boolean buttonDirectionDown, double buttonLeft, double buttonRight)
+    public void latch(boolean buttonDirectionUp, boolean buttonDirectionDown, double buttonTriggerLeft, double buttonTriggerRight, boolean buttonCenter, boolean buttonLeft, boolean buttonRight)
     {
       /*
       if(buttonLeftUp && buttonLeftDown == 0){
@@ -104,29 +94,80 @@ public class Climb extends SubsystemBase {
         motorR.set(0);
       }
       */
+      //System.out.println("Motor Right Pos: " + motorR.getEncoder().getPosition());
+      //System.out.println("Motor Left Pos: " + motorL.getEncoder().getPosition());
+      if(buttonCenter && (buttonTriggerLeft == 0 && buttonTriggerRight == 0)){
+        toggleR = true;
+        toggleL = true;
+        Robot.turret.turretPosMove(true, false);
+        motorR.getPIDController().setReference(climbRCenter, ControlType.kPosition);
+        motorL.getPIDController().setReference(climbLCenter, ControlType.kPosition);
+
+      }
+      else if(buttonLeft && (buttonTriggerLeft == 0 && buttonTriggerRight == 0)){
+        toggleR = true;
+        toggleL = true;
+        Robot.turret.turretPosMove(true, false);
+        motorR.getPIDController().setReference(climbRLeft, ControlType.kPosition);
+        motorL.getPIDController().setReference(climbLLeft, ControlType.kPosition);
+
+      }
+      else if(buttonRight && (buttonTriggerLeft == 0 && buttonTriggerRight == 0)){
+        toggleR = true;
+        toggleL = true;
+        Robot.turret.turretPosMove(true, false);
+        motorR.getPIDController().setReference(climbRRight, ControlType.kPosition);
+        motorL.getPIDController().setReference(climbLRight, ControlType.kPosition);
+
+      }
       if(buttonDirectionUp){
+        toggleR = false;
+        toggleL = false;
+        Robot.turret.turretPosMove(true, false);
         climbPower = .5;
-        Robot.turret.turretBackward(true);
       }
-      else if(buttonDirectionDown){
+      if(buttonDirectionDown){
+        toggleR = false;
+        toggleL = false;
+        Robot.turret.turretPosMove(true, false);
         climbPower = -.5;
-        Robot.turret.turretBackward(true);
       }
-      if(buttonRight != 0){
+      if(buttonTriggerRight != 0){
+        toggleR = false;
+        Robot.turret.turretPosMove(true, false);
         motorR.set(climbPower);
-        Robot.turret.turretBackward(true);
       }
-      else{
+      else if (toggleR == false && buttonTriggerRight == 0){
         motorR.set(0);
       }
-      if(buttonLeft != 0){
+      if(buttonTriggerLeft != 0){
+        toggleL = false;
+        Robot.turret.turretPosMove(true, false);
         motorL.set(climbPower);
-        Robot.turret.turretBackward(true);
       }
-      else{
+      else if (toggleL == false && buttonTriggerLeft == 0){
         motorL.set(0);
       }
+      
+      
 
+    }
+    public void climberPos(boolean buttonCenter, boolean buttonLeft, boolean buttonRight){
+      if(buttonCenter){
+        Robot.turret.turretPosMove(true, false);
+        motorR.getPIDController().setReference(climbRCenter, ControlType.kPosition);
+        motorL.getPIDController().setReference(climbLCenter, ControlType.kPosition);
+      }
+      else if(buttonLeft){
+        Robot.turret.turretPosMove(true, false);
+        motorR.getPIDController().setReference(climbRLeft, ControlType.kPosition);
+        motorL.getPIDController().setReference(climbLLeft, ControlType.kPosition);
+      }
+      else if(buttonRight){
+        Robot.turret.turretPosMove(true, false);
+        motorR.getPIDController().setReference(climbRRight, ControlType.kPosition);
+        motorL.getPIDController().setReference(climbLRight, ControlType.kPosition);
+      }
     }
     public void unLatch(double Power)
     {

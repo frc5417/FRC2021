@@ -34,7 +34,7 @@ public class ClimbExtendLatch extends CommandBase {
   public void execute() {
     //Robot.c.extend(Robot.r.bButton());
     // Change bumpers to start select
-    Robot.climb.latch(Robot.robotContainer.startButton(), Robot.robotContainer.selectButton(), Robot.robotContainer.lTrigger(), Robot.robotContainer.rTrigger());
+    Robot.climb.latch(Robot.robotContainer.startButton(), Robot.robotContainer.selectButton(), Robot.robotContainer.lTrigger(), Robot.robotContainer.rTrigger(), Robot.robotContainer.buttonB12Released(), Robot.robotContainer.buttonB14Released(), Robot.robotContainer.buttonB16Released());
   }
 
   // Called once the command ends or is interrupted.

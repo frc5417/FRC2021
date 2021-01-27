@@ -1,4 +1,4 @@
-package frc.robot.subsystems;
+/*package frc.robot.subsystems;
 
 import edu.wpi.first.wpilibj.SPI.Port;
 import edu.wpi.first.wpilibj.kinematics.*;
@@ -56,7 +56,7 @@ public class TrajectoryFollowing extends SubsystemBase{
         resetEncoders();
         zeroHeading();
 
-        odometry = new DifferentialDriveOdometry(getHeading()/*, pose*/); //try with and without pose as argument
+        odometry = new DifferentialDriveOdometry(getHeading()/*, pose); //try with and without pose as argument
 
         driveSlaveLeft.set(ControlMode.Follower, driveMasterLeft.getDeviceID());
         driveSlaveRight.set(ControlMode.Follower, driveMasterRight.getDeviceID());
@@ -108,7 +108,7 @@ public class TrajectoryFollowing extends SubsystemBase{
 
     /*public Trajectory getTraj(){
         return traj;
-    }*/
+    }
 
     public void resetOdometry(Pose2d pose){
         resetEncoders();
@@ -133,3 +133,4 @@ public class TrajectoryFollowing extends SubsystemBase{
     }
 
 }
+*/

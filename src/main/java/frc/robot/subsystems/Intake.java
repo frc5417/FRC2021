@@ -8,7 +8,6 @@
 
 package frc.robot.subsystems;
 
-
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
@@ -20,6 +19,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import edu.wpi.first.wpilibj.DigitalInput;
 import frc.robot.Robot;
+import frc.robot.subsystems.Limelight;
 
 //test7
 public class Intake extends SubsystemBase {
@@ -44,8 +44,9 @@ public class Intake extends SubsystemBase {
     public CANSparkMax slaveShoot =  new CANSparkMax(Constants.shooterSlave, MotorType.kBrushless);
     public DigitalInput ballInternalCounter = new DigitalInput(Constants.ballInternalCounterPort);
     public DigitalInput ballFeederCounter = new DigitalInput(Constants.ballFeederCounterPort);
-    //Solenoid intakeSolenoid = new Solenoid(1);
-    double setPoint;
+    Solenoid intakeSolenoid = new Solenoid(1);
+    double setPointVariable;
+    double setPointConst;
     
     public Intake(){
       rollerBar = new WPI_VictorSPX(Constants.intakeRoller);
@@ -61,7 +62,8 @@ public class Intake extends SubsystemBase {
       //slaveShoot.getPIDController().setP(Constants.shootkP);
       masterShoot.getPIDController().setI(Constants.shootkI);
       //slaveShoot.getPIDController().setI(Constants.shootkI);
-      setPoint = Constants.shootsetPointConstant*Constants.shootMaxRPM;
+      setPointConst = Constants.shootsetPointConstant*Constants.shootMaxRPM;
+      setPointVariable = Robot.limelight.shootsetPointVariable*Constants.shootMaxRPM;
       
     }
     
@@ -92,27 +94,19 @@ public class Intake extends SubsystemBase {
         }
       }*/
 
-      if(ballFeederCounter.get() == false){
+      //if(ballFeederCounter.get() == false){
         feeder.set(intakeSpeed);
         internalBelt.set(-intakeSpeed);
-      }
-      else if(ballFeederCounter.get()){
-        feeder.set(0);
-        internalBelt.set(-intakeSpeed);
-        if(ballInternalCounter.get() && ballInternalToggle == false){
-          ballInternalToggle = true;
-          internalBelt.set(0);
-        }
-      }
-      if(ballInternalToggle && buttonForward != 0){
-        ballInternalToggle = false;
-        if(ballInternalCounter.get()){
-          internalBelt.set(-intakeSpeed);
-        }
-        else{
-          internalBelt.set(0);
-        }
-      }
+        //count = 0;
+      //}
+      //else if(ballFeederCounter.get()){
+        //feeder.set(intakeSpeed);
+        //if(count >= 50){
+          //feeder.set(0);
+        //}
+        //internalBelt.set(-intakeSpeed);
+      //}
+
 
 
 
@@ -134,10 +128,13 @@ public class Intake extends SubsystemBase {
             
       System.out.println(masterShoot.getEncoder().getVelocity() + " Motor ID: 12");
       //System.out.println(slaveShoot.getEncoder().getVelocity() + " Motor ID: 3");
-      masterShoot.getPIDController().setReference(setPoint, ControlType.kVelocity);
-      slaveShoot.follow(masterShoot);
+      System.out.println("boop");
+      masterShoot.getPIDController().setReference(Robot.limelight.shootsetPointVariable*Constants.shootMaxRPM, ControlType.kVelocity);
+      System.out.println("baap");
+      System.out.println(masterShoot.getEncoder().getVelocity() + " Motor ID: 12");
+      //slaveShoot.follow(masterShoot);
 
-      if(masterShoot.getEncoder().getVelocity() <= (Constants.shootsetPointConstant + 500) && masterShoot.getEncoder().getVelocity() >= (Constants.shootsetPointConstant - 500)){
+      if(masterShoot.getEncoder().getVelocity() <= (Robot.limelight.shootsetPointVariable + 500) && masterShoot.getEncoder().getVelocity() >= (Robot.limelight.shootsetPointVariable - 500)){
         internalBelt.set(-intakeSpeed);
         feeder.set(intakeSpeed);
       }
@@ -154,10 +151,10 @@ public class Intake extends SubsystemBase {
   }
   public void deployPistons(boolean buttonDeploy, boolean buttonRetract){
     if(buttonDeploy){
-      //intakeSolenoid.set(true);
+      intakeSolenoid.set(true);
     }
     else if(buttonRetract){
-      //intakeSolenoid.set(false);
+      intakeSolenoid.set(false);
     }
   }
 
@@ -214,13 +211,13 @@ public class Intake extends SubsystemBase {
       /*masterShoot.set(-1);
       slaveShoot.set(-1);*/
             
-      System.out.println(masterShoot.getEncoder().getVelocity() + " Motor ID: 12");
+      //System.out.println(masterShoot.getEncoder().getVelocity() + " Motor ID: 12 " + masterShoot.getEncoder().getVelocityConversionFactor());
       //System.out.println(slaveShoot.getEncoder().getVelocity() + " Motor ID: 3");
-      masterShoot.getPIDController().setReference(setPoint, ControlType.kVelocity);
+      masterShoot.getPIDController().setReference(setPointVariable, ControlType.kVelocity);
       slaveShoot.follow(masterShoot);
 
       if(masterShoot.getEncoder().getVelocity() <= (Constants.shootsetPointConstant + 500) && masterShoot.getEncoder().getVelocity() >= (Constants.shootsetPointConstant - 500)){
-        internalBelt.set(intakeSpeed);
+        internalBelt.set(-intakeSpeed);
         feeder.set(intakeSpeed);
       }
     }
@@ -230,23 +227,33 @@ public class Intake extends SubsystemBase {
       //slaveShoot.set(0);
       internalBelt.set(0);
       feeder.set(0);
-      count = 0;
     }
 
   }
 
-  public void AutoShoot(){
+  public void autoShoot(boolean flag){
 
-      masterShoot.getPIDController().setReference(setPoint, ControlType.kVelocity);
-      slaveShoot.follow(masterShoot);
+    if(flag){
+      /*masterShoot.set(-1);
+      slaveShoot.set(-1);*/
+            
+      //System.out.println(masterShoot.getEncoder().getVelocity() + " Motor ID: 12");
+      //System.out.println(slaveShoot.getEncoder().getVelocity() + " Motor ID: 3");
+      masterShoot.getPIDController().setReference(setPointVariable, ControlType.kVelocity);
+      //slaveShoot.follow(masterShoot);
 
-      if(masterShoot.getEncoder().getVelocity() <= (Constants.shootsetPointConstant + 500) && masterShoot.getEncoder().getVelocity() >= (Constants.shootsetPointConstant - 500)){
-        runInternalBelt(true);
-        runFeeder(true);
-      }
-      else{
-        internalBelt.set(0);
-        feeder.set(0);
+      if(masterShoot.getEncoder().getVelocity() <= (Robot.limelight.shootsetPointVariable + 500) && masterShoot.getEncoder().getVelocity() >= (Robot.limelight.shootsetPointVariable - 500)){
+        internalBelt.set(-intakeSpeed);
+        feeder.set(intakeSpeed);
       }
     }
+    else{
+      masterShoot.set(0);
+      masterShoot.getPIDController().setReference(0, ControlType.kVelocity);
+      //slaveShoot.set(0);
+      rollerBar.set(0);
+      internalBelt.set(0);
+      feeder.set(0);
+    }
+  }
 }

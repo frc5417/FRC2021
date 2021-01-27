@@ -8,6 +8,8 @@
 package frc.robot;
 
 import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.command.WaitCommand;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.Joystick; 
@@ -36,6 +38,11 @@ public class Robot extends TimedRobot {
   private static final String kCustomAuto = "My Auto";
   private String m_autoSelected;
   private final SendableChooser<String> m_chooser = new SendableChooser<>();
+  private boolean run = false;
+  public double[] autoSpeeds;
+  public boolean autoToggle = false;
+  public boolean shootToggle = false;
+  public int timer;
 
   /**
    * This function is run when the robot is first started up and should be
@@ -69,10 +76,10 @@ public class Robot extends TimedRobot {
   public static Command shift = new Shift(drive);
   public static Command shoot = new Shoot(intake);
   public static Command intakeSystem = new RunIntakeSystem(intake);
-  public static Command moveTurret = new SetTurret(turret);
-  public static TrajectoryFollowing trajectoryFollowing = new TrajectoryFollowing();
+  public static Command turretShoot = new SetTurret(turret);
+  //public static TrajectoryFollowing trajectoryFollowing = new TrajectoryFollowing();
   public static Compressor compressor;
-  
+  public static Command deployIntakePistons = new DeployIntakePistons(intake);
   
 
   
@@ -81,6 +88,7 @@ public class Robot extends TimedRobot {
     m_chooser.setDefaultOption("Default Auto", kDefaultAuto);
     m_chooser.addOption("My Auto", kCustomAuto);
     SmartDashboard.putData("Auto choices", m_chooser);
+
     
 
     //compressor = new Compressor(0);
@@ -124,16 +132,19 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void autonomousInit() {
-    trajectoryFollowing.zeroHeading();
-    trajectoryFollowing.resetEncoders();
-    turret.moveTurret(true, false);
+    //trajectoryFollowing.zeroHeading();
+    //trajectoryFollowing.resetEncoders();
+    
 
     //autonomous = robotContainer.getAutonomousCommand();
+    /*
     autonomous = new SequentialCommandGroup(new AutoAlign(limelight), new AutoShoot(intake));
     if (autonomous != null) {
       autonomous.schedule();
     }
     ledMode.setNumber(3);
+    */
+    m_autoSelected = kCustomAuto;
 
   }
 
@@ -142,9 +153,101 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void autonomousPeriodic() {
-    
-    intake.count += 20;
-    CommandScheduler.getInstance().run();
+
+
+    timer += 20;
+    //System.out.println(timer);
+    /*
+    if(timer < 2000){
+      ledMode.setNumber(3);
+      autoSpeeds = limelight.getSpeeds();
+      drive.SetPower(autoSpeeds[0], autoSpeeds[1]);
+    }
+    else if(timer < 4000){
+      ledMode.setNumber(1);
+      intake.deployPistons(true, false);
+      intake.autoShoot(true);
+    }
+    else if(timer < 6000){ 
+      intake.autoShoot(false);
+      drive.SetPower(.9, .9);
+    }
+    else if(timer > 6000){
+      intake.autoShoot(false);
+      drive.SetPower(0, 0);
+    }
+    */
+
+    if(timer < 1000){
+      ledMode.setNumber(3);
+      autoSpeeds = limelight.getSpeeds();
+      drive.SetPower(autoSpeeds[0], autoSpeeds[1]);
+    }
+    else if(timer < 3000){
+      ledMode.setNumber(1);
+      intake.autoShoot(true);
+    }
+    else if(timer < 3500){ 
+      intake.autoShoot(false);
+      drive.setDriveTrainRampRate(.5, .5);
+      drive.autoPowerAuton(-12.1667, -15.8571, -12.1667, -15.8571);
+
+    }
+    else if(timer < 4500){
+      drive.setDriveTrainRampRate(1, 1);
+      drive.autoPowerAuton(-88.8371, 56.3101, -88.8371, 56.3101);
+    }
+    else if(timer < 5000){
+      drive.zeroReset();
+      drive.setDriveTrainRampRate(.5, .5);
+      drive.autoPowerAuton(-29.1188, -29.1664, -29.1188, -29.1664);
+
+    }
+    else if (timer < 5250){
+      drive.SetPower(0, 0);
+    }
+    else if(timer < 8250){
+      intake.deployPistons(true, false);
+      intake.runIntakeSystem(30, 0, false, false, false);
+      drive.zeroReset();
+      drive.setDriveTrainRampRate(3, 3);
+      drive.autoPowerAuton(50, -50, 50, -50);
+    }
+    else if (timer < 8500){
+      drive.SetPower(0, 0);
+    }
+    else if(timer < 10750){
+      intake.deployPistons(false, false);
+      intake.runIntakeSystem(0, 0, false, false, false);
+      drive.zeroReset();
+      drive.setDriveTrainRampRate(2, 2);
+      drive.autoPowerAuton(-100, 100, -100, 100);
+    }
+    else if(timer < 11750){
+      drive.zeroReset();
+      drive.setDriveTrainRampRate(.5, .5);
+      drive.autoPowerAuton(33.6902, 33.6902, 33.6902, 33.6902);
+    }
+    else if(timer < 12750){
+      ledMode.setNumber(3);
+      autoSpeeds = limelight.getSpeeds();
+      drive.SetPower(autoSpeeds[0], autoSpeeds[1]);
+    }
+    else if(timer < 14750){
+      ledMode.setNumber(1);
+      intake.autoShoot(true);
+    }
+    else if(timer < 15000){
+      intake.autoShoot(false);
+    }
+
+    //Part 1: MR: -15.8571 ML: -12.1667 SR: -15.8571 SL: -12.1667
+    //Part 2: MR: 56.3101 ML: -88.8371 SR: 56.3101 SL: -88.8371
+    //Part 3: MR: 21.3570 ML: -114.5485 SR: 21.3570 SL: -144.5485
+    //Part 4: MR: -86.8369 ML: -5.6190 SR: -86.8369 SL: -5.6190
+    //Part 5: MR: 62.9536 ML: -157.2334 SR: 62,9536 SL: -157.2334
+    //Part 6: MR: 99.0029 ML: -110.4538 SR: 99.0029 SL: -110.4538
+    //CommandScheduler.getInstance().run();
     //System.out.println(trajectoryFollowing.getPose());
     
   }
@@ -154,15 +257,30 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void teleopPeriodic() {
-
+    //finding out if ta is decimal or percentage
+    limelight.shootsetPointVariable = (-4047.25 + (1699.79*(Math.floor(Math.log(limelight.area)*100)/100)));
+    System.out.println("ta:" + ta.getDouble(0.0));
+    System.out.println("log calculator thing" + (-4047.25 + (1699.79*(Math.floor(Math.log(limelight.area)*100)/100))));
+    System.out.println("Shoot set point" + limelight.shootsetPointVariable);
+    //Constants.Kp = 
+    //System.out.println(robotContainer.pad.getPOV());
+    intake.count += 20;
     //moveTurret.schedule();
     tankDrive.schedule();
     //align.schedule();
-    climbL.schedule();
+    //climbL.schedule();
+    climb.latch(Robot.robotContainer.startButton(), Robot.robotContainer.selectButton(), Robot.robotContainer.lTrigger(), Robot.robotContainer.rTrigger(), Robot.robotContainer.buttonB12Released(), Robot.robotContainer.buttonB14Released(), Robot.robotContainer.buttonB16Released());
+    //climb.climberPos(robotContainer.buttonB12Released(), robotContainer.buttonB14Released(), robotContainer.buttonB16Released());
     //climbU.schedule();
-    drive.shiftPiston(robotContainer.lBumper(), robotContainer.rBumper());
+    drive.shiftPiston(robotContainer.rBumper(), robotContainer.lBumper());
     drive.setDefaultCommand(tankDrive);
     robotContainer.aPad.whileHeld(align);
+    //turret.turretLoop();
+    //its me again
+    turret.turretSetZero(robotContainer.xButton());
+    turret.moveTurret(robotContainer.pad.getPOV());
+    turret.turretPosMove(robotContainer.yButtonReleased(), robotContainer.bButtonReleased());
+    //System.out.println("Selected Sensor Pos: " + turret.getTurretSensorPos());
     //intake.shoot(robotContainer.yButtonM());
     /*
     if(robotContainer.yButtonM()){
@@ -174,9 +292,10 @@ public class Robot extends TimedRobot {
     */
     //shoot.schedule();
     intakeSystem.schedule();
+    intake.deployPistons(Robot.robotContainer.rBumperM(), Robot.robotContainer.lBumperM());
     //intakeForward.schedule();
     //intakeBackward.schedule();
-
+    //System.out.println("Distance: " + limelight.estimateDistance());
     //moveTurret.schedule();
     CommandScheduler.getInstance().run();
     
@@ -185,14 +304,17 @@ public class Robot extends TimedRobot {
       ledMode.setNumber(3);
     }
     else{
-      ledMode.setNumber(1);
+      ledMode.setNumber(3);
     }
 
     
     //intake.runInternalBelt(pad.getRawButtonPressed(3)); 
     //intake.runFeeder(pad.getRawButtonPressed(3)); //check this to make sure its the right button
 
-    
+    System.out.println("Master Motor Right Pos: " + drive.driveMasterR.getEncoder().getPosition());
+    System.out.println("Master Motor Left Pos: " + drive.driveMasterL.getEncoder().getPosition());
+    System.out.println("Slave Motor Right Pos: " + drive.driveSlaveR.getEncoder().getPosition());
+    System.out.println("Slave Motor Left Pos: " + drive.driveMasterL.getEncoder().getPosition());
     
 
 

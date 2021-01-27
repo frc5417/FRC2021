@@ -1,8 +1,11 @@
 package frc.robot;
 
 import edu.wpi.first.wpilibj.kinematics.*;
+import frc.robot.subsystems.Limelight;
 
 public class Constants {
+    public static Limelight limelight = new Limelight();
+
     public static final int masterRightMotor = 1; // actual 1 test 2
     public static final int slaveRightMotor = 17; // actual 17 test 4
     public static final int masterLeftMotor = 14; // actual 14 test 1
@@ -15,20 +18,20 @@ public class Constants {
     public static final int shooterMaster = 12;
     public static final int shooterSlave = 3;
     public static final int turretPort = 9;
-    public static final int ballInternalCounterPort = 1;
-    public static final int ballFeederCounterPort = 2;
+    public static final int ballInternalCounterPort = 2;
+    public static final int ballFeederCounterPort = 1;
 
-    public static final double Kp = .05;
-    public static final double min_command = .05; //real bot .1
+    public static final double Kp = .035; // originally .025
+    public static final double min_command = .01; //real bot .1
     public static final double distance_adjust = .05;
     public static final double ticksPerRev = 12.0; // Without Gear Reduction
     public static final double maxVelocity = 9.0; // meters per sec
     public static final double wheelDiameter = 0.1016;
     public static final double driveTrain_width = .4699;
 
-    public static final double targetHeight = 83.25; //inches
-    public static final double limelightAngle = 54.79; //on babybot (54.79), in degrees
-    public static final double limelightHeight = 29; //inches
+    public static final double targetHeight = 89.75; //inches
+    public static final double limelightAngle = 28.66; //on babybot (54.79), in degrees final bot: ?
+    public static final double limelightHeight = 26; //inches
 
     public static final double desiredDistance = 60;
     public static final double kVolts = .461;
@@ -48,9 +51,30 @@ public class Constants {
     public static final double shootkI = 0; //7e-52;
     public static final double shootkD = 0; 
     public static final double shootkIz = 0; 
-    public static final double shootkFF = 0.00000005; //add 5 
+    public static final double shootkFF = 0.00000005; // add 5 
     public static final double shootkMaxOutput = 1; 
     public static final double shootkMinOutput = -1;
     public static final double shootMaxRPM = 5700;
-    public static final double shootsetPointConstant = -2800;
+    public static final double shootsetPointConstant = -4200; // 3100 in auton
+    //public static double shootsetPointVariable = (-4047.25 + (1699.79*(Math.floor(Math.log(limelight.area)*100)/100)));
+
+    //Turret Constants
+    public static final double turretkP = .007;
+    public static final double turretkI = .00000000000001;
+    public static final double turretkD = 0;
+    public static final double turretClimbEncoderPos = 80000;
+
+    //Climber Constants
+    public static final double climberkP = .05;
+    public static final double climberkI = 0;
+    public static final double climberLCenter = -189;
+    public static final double climberLLeft = -211;
+    public static final double climberLRight = -211;
+    public static final double climberRCenter = -180;
+    public static final double climberRLeft = -193;
+    public static final double climberRRight = -214;
+
+    //Drive Constants
+    public static final double drivekP = .0312;
+    public static final double drivekI = .000000000001;
 }

@@ -31,7 +31,7 @@ public class SetTurret extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    Robot.turret.moveTurret(Robot.robotContainer.xButton(), Robot.robotContainer.yButton());
+    Robot.turret.turretShoot(Robot.robotContainer.bButton());
   }
 
   // Called once the command ends or is interrupted.

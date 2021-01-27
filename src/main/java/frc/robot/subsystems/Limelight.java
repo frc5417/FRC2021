@@ -10,7 +10,7 @@ import com.ctre.phoenix.motorcontrol.can.*;
 import com.ctre.phoenix.motorcontrol.can.VictorSPX;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
-
+import java.lang.Math;
 
 import frc.robot.Constants;
 
@@ -26,7 +26,7 @@ public class Limelight extends SubsystemBase {
     double y;
 
     // Area of the target
-    double area;
+    public double area;
 
     // Skew of the robot
     double s;
@@ -56,6 +56,7 @@ public class Limelight extends SubsystemBase {
     // Height of goal in inches
     double h2;
     
+    public double shootsetPointVariable;
     // Desired distance from goal in inches
     double idealDistance;
 
@@ -121,7 +122,7 @@ public class Limelight extends SubsystemBase {
     }
 
     public double estimateDistance(){
-      return (Constants.targetHeight - Constants.limelightHeight) / Math.tan(Constants.limelightAngle + y);
+      return (Constants.targetHeight - Constants.limelightHeight) / (Math.tan(Math.toRadians(Constants.limelightAngle) + Math.toRadians(y)));
     }
 
     public void distanceSwap(boolean buttonDFar, boolean buttonDSmall){
@@ -140,10 +141,12 @@ public class Limelight extends SubsystemBase {
     // Program to allow the drivers to auto align based on the target
     public double[] getSpeeds(){
 
+
+
       // Constants used to calculate motor power for alignment
-      Double Kp = -Constants.Kp;
-      Double KpDistance = -.04;
-      //Double area_error = 3 - area;
+      //testing inverse function for autoalign Kp
+      Double Kp =  (((.00222222222222222)*area)-(.021111111111111 )); //-Constants.Kp; // 
+      Double KpDistance = -.05;
       Double distance_adjust = Constants.distance_adjust;
       Double min_command = Constants.min_command;
       left_command = 0;
@@ -161,18 +164,19 @@ public class Limelight extends SubsystemBase {
          //Double distance_error = estimateDistance() - getIdealDistance();
         Double steering_adjust = 0.075;
         // Determine power based on the horizontal offset
-        if (x > 1.0)
+        if (x > .05)
         {
                 steering_adjust = Kp*heading_error - min_command;
         }
-        else if (x < -1.0)
+        else if (x < -.05)
         {
                 steering_adjust = Kp*heading_error + min_command;
         }
         
-        distance_adjust = KpDistance * distance_error;
-        left_command += (steering_adjust - distance_adjust);
-        right_command += (distance_adjust + steering_adjust);
+        //distance_adjust = KpDistance * distance_error;
+        left_command += (steering_adjust);
+        right_command += (steering_adjust);
+        //shootsetPointVariable = (-4047.25 + (1699.79*(Math.floor(Math.log(area)*100)/100)));
         /*left_command -= distance_adjust;
         right_command += distance_adjust;
         turret_command += steering_adjust;*/
