@@ -74,4 +74,16 @@ public class Constants {
     //Drive Constants
     public static final double drivekP = .0312;
     public static final double drivekI = .000000000001;
+
+    //Auton Constants
+    public static final double driveGearingRatio = 18;
+    public static final double kPAuto = 1.27;
+    public static final double kVAuto = 4.69;
+    public static final double kAAuto = .179;
+    public static final double kDAuto = 0;
+    public static final double kSAuto = .12;
+    public static final double kGAuto = 0;
+    public static final double kCosAuto = 0;
+    public static final double rSquaredAuto = .998;
+
 }
