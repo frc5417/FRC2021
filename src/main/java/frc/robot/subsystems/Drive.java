@@ -7,17 +7,27 @@
 
 package frc.robot.subsystems;
 
+import com.kauailabs.navx.frc.AHRS;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.ctre.phoenix.motorcontrol.can.VictorSPX;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.revrobotics.CANSparkMax;
+import com.revrobotics.CANEncoder;
 import com.revrobotics.ControlType;
 import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 import frc.robot.Constants;
 import frc.robot.Robot;
+import edu.wpi.first.wpilibj.drive.DifferentialDrive;
+import edu.wpi.first.wpilibj.geometry.Pose2d;
+import edu.wpi.first.wpilibj.geometry.Rotation2d;
+import edu.wpi.first.wpilibj.kinematics.DifferentialDriveKinematics;
+import edu.wpi.first.wpilibj.kinematics.DifferentialDriveOdometry;
+import edu.wpi.first.wpilibj.kinematics.DifferentialDriveWheelSpeeds;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj.util.Units;
 
 import java.lang.Math;
 import edu.wpi.first.wpilibj.Solenoid;
@@ -35,6 +45,12 @@ public class Drive extends SubsystemBase {
   public CANSparkMax driveMasterR = new CANSparkMax(Constants.masterRightMotor, MotorType.kBrushless);
   public CANSparkMax driveSlaveR = new CANSparkMax(Constants.slaveRightMotor, MotorType.kBrushless);
   public CANSparkMax driveMasterL = new CANSparkMax(Constants.masterLeftMotor, MotorType.kBrushless);
+
+  public CANEncoder neoEncoderL = driveMasterL.getEncoder();
+  public CANEncoder neoEncoderR = driveMaster.getEncoder();
+
+  public AHRS gyro = new AHRS(SPI.Port.kMXP);
+
   TalonSRX turretMotor = new TalonSRX(9);
   public Solenoid shifter;
   Compressor compressor;
@@ -48,6 +64,9 @@ public class Drive extends SubsystemBase {
   VictorSPX driveSlaveRight = new VictorSPX(Constants.slaveRightMotor);
   VictorSPX driveSlaveLeft = new VictorSPX(Constants.slaveLeftMotor);*/
 
+  private DifferentialDrive drive;
+  private DifferentialDriveOdometry driveOdom;
+
 
   public Drive(){
   
@@ -60,7 +79,9 @@ public class Drive extends SubsystemBase {
 
     turretMotor.setNeutralMode(NeutralMode.Coast);
 
+    drive = new DifferentialDrive(driveMasterL, driveMasterR);
 
+    driveOdom = new DifferentialDriveOdometry(Rotation2D.fromDegrees(getHeading()));
 
     driveMasterL.getPIDController().setP(Constants.drivekP);
     driveMasterR.getPIDController().setP(Constants.drivekP);
@@ -87,6 +108,9 @@ public class Drive extends SubsystemBase {
     driveMasterR.setIdleMode(IdleMode.kCoast);
     driveSlaveL.setIdleMode(IdleMode.kCoast);
     driveSlaveR.setIdleMode(IdleMode.kCoast);
+
+    driveSlaveL.follow(driveMasterL);
+    driveSlaveR.follow(driveMasterR);
     //if (!((leftPower < .1)&&(leftPower > -.1) || (rightPower < .1)&&(rightPower > -.1))){
     /*  
     driveMasterLeft.set(ControlMode.PercentOutput, -leftPower);
@@ -97,8 +121,8 @@ public class Drive extends SubsystemBase {
 
     driveMasterL.set(-Math.pow(leftPower, 3));
     driveMasterR.set(Math.pow(rightPower, 3)); //inversions for bowser
-    driveSlaveL.set(-Math.pow(leftPower, 3));
-    driveSlaveR.set(Math.pow(rightPower, 3));
+    //driveSlaveL.set(-Math.pow(leftPower, 3));
+    //driveSlaveR.set(Math.pow(rightPower, 3));
     //System.out.println("Left Speed: " + driveMasterL.getEncoder().getVelocity());
     //System.out.println("Right Speed: " + driveMasterR.getEncoder().getVelocity());
     
@@ -214,6 +238,10 @@ public class Drive extends SubsystemBase {
     }
 */      
   } 
+
+  public double getHeading(){
+    return Math.IEEEremainder(gyro.getAngle(), 360);
+  }
   
 
 }
