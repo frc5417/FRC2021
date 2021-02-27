@@ -90,11 +90,11 @@ public class Drive extends SubsystemBase {
 
     //according to api, neo encoder track distance based on full rotations, not individual encoder ticks.
     //units in meters
-    neoEncoderL.setPositionConversionFactor(2*Math.PI*.1524);
-    neoEncoderR.setPositionConversionFactor(2*Math.PI*.1524);
+    neoEncoderL.setPositionConversionFactor(Math.PI*.1524 / Constants.driveGearingRatio);
+    neoEncoderR.setPositionConversionFactor(Math.PI*.1524 / -Constants.driveGearingRatio);
 
-    neoEncoderL.setVelocityConversionFactor(2*Math.PI*.1524);
-    neoEncoderR.setVelocityConversionFactor(2*Math.PI*.1524);
+    neoEncoderL.setVelocityConversionFactor(Math.PI*.1524 / Constants.driveGearingRatio);
+    neoEncoderR.setVelocityConversionFactor(Math.PI*.1524 / -Constants.driveGearingRatio);
 
     drive = new DifferentialDrive(driveMasterL, driveMasterR);
     //driveMasterL->setSafetyEnabled(false);
@@ -152,8 +152,8 @@ public class Drive extends SubsystemBase {
   }
 
   public void tankDriveVolts(double leftVolts, double rightVolts){
-    driveMasterL.set(-leftVolts / RobotController.getBatteryVoltage());
-    driveMasterR.set(rightVolts / RobotController.getBatteryVoltage());
+    driveMasterL.set(leftVolts / RobotController.getBatteryVoltage());
+    driveMasterR.set(-rightVolts / RobotController.getBatteryVoltage());
     drive.feed();
   }
 
@@ -203,7 +203,7 @@ public class Drive extends SubsystemBase {
     //driveSlaveR.set(Math.pow(rightPower, 3));
     //System.out.println("Left Speed: " + driveMasterL.getEncoder().getVelocity());
     //System.out.println("Right Speed: " + driveMasterR.getEncoder().getVelocity());
-    
+    System.out.println("distance traveled teleop: right: " + getRightDistance() + " left: " + getLeftDistance());
   }
     /*else{
       driveMasterLeft.set(ControlMode.PercentOutput, 0);
