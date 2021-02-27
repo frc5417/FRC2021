@@ -56,6 +56,7 @@ public class Limelight extends SubsystemBase {
     // Height of goal in inches
     double h2;
     
+    public double shootsetPointVariable;
     // Desired distance from goal in inches
     double idealDistance;
 

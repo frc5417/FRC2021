@@ -136,12 +136,12 @@ public class Drive extends SubsystemBase {
   }
 */
   public DifferentialDriveWheelSpeeds getWheelSpeeds(){
-    System.out.println("you have reached getWheelSpeeds");
+    System.out.println("wheel speeds: " + new DifferentialDriveWheelSpeeds(neoEncoderL.getVelocity(), neoEncoderR.getVelocity()));
     return new DifferentialDriveWheelSpeeds(neoEncoderL.getVelocity(), neoEncoderR.getVelocity());
   }
   
   public Pose2d getPose(){
-    System.out.println("you have reached getPose");
+    System.out.println("poseMeters:"+ driveOdom.getPoseMeters()); 
     return driveOdom.getPoseMeters();
   }
 
@@ -152,7 +152,6 @@ public class Drive extends SubsystemBase {
   }
 
   public void tankDriveVolts(double leftVolts, double rightVolts){
-    System.out.println("tankdrivevolts has been reached");
     driveMasterL.set(-leftVolts / RobotController.getBatteryVoltage());
     driveMasterR.set(rightVolts / RobotController.getBatteryVoltage());
     drive.feed();
@@ -160,6 +159,14 @@ public class Drive extends SubsystemBase {
 
   public double getAverageEncoderDistance(){
     return(neoEncoderL.getPosition() + neoEncoderR.getPosition()) / 2.0;
+  }
+
+  public double getLeftDistance(){
+    return neoEncoderL.getPosition();
+  }
+
+  public double getRightDistance(){
+    return neoEncoderR.getPosition();
   }
 
   public CANEncoder getLeftNeoEncoder(){

@@ -163,6 +163,8 @@ public class Robot extends TimedRobot {
   @Override
   public void autonomousPeriodic() {
     CommandScheduler.getInstance().run();
+    System.out.println("left distance: " + drive.getLeftDistance());
+    System.out.println("right distance: " + drive.getRightDistance());
 
 
     //timer += 20;
