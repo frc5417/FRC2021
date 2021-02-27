@@ -67,7 +67,7 @@ public class Robot extends TimedRobot {
   public static Intake intake = new Intake();
   public static Turret turret = new Turret();
   public static RobotContainer robotContainer = new RobotContainer();
-  public static Command autonomous;
+  public static SimpleAuto autonomous = new SimpleAuto(drive);
   public static Command align = new AutoAlign(limelight);
   public static Command tankDrive = new TankDrive(drive);
   //public static Command intakeForward = new RunIntakeForward(intake);
@@ -81,15 +81,15 @@ public class Robot extends TimedRobot {
   //public static TrajectoryFollowing trajectoryFollowing = new TrajectoryFollowing();
   public static Compressor compressor;
   public static Command deployIntakePistons = new DeployIntakePistons(intake);
-  
 
-  
+  public Command autonomousCommand;
+ 
   @Override
   public void robotInit() {
     m_chooser.setDefaultOption("Default Auto", kDefaultAuto);
     m_chooser.addOption("My Auto", kCustomAuto);
     SmartDashboard.putData("Auto choices", m_chooser);
-
+    //drive.setDefaultCommand(tankDrive);
     
 
     //compressor = new Compressor(0);
@@ -145,7 +145,15 @@ public class Robot extends TimedRobot {
     }
     ledMode.setNumber(3);
     */
-    m_autoSelected = kCustomAuto;
+    //m_autoSelected = kCustomAuto;
+
+    /*autonomousCommand = robotContainer.getSimpleAuto(drive);
+    autonomousCommand.initialize();
+
+    if (autonomousCommand != null) {
+        autonomousCommand.schedule();
+    }*/
+    robotContainer.getSimpleAuto(drive).schedule();
 
   }
 
@@ -154,9 +162,10 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void autonomousPeriodic() {
+    CommandScheduler.getInstance().run();
 
 
-    timer += 20;
+    //timer += 20;
     //System.out.println(timer);
     /*
     if(timer < 2000){
@@ -179,7 +188,7 @@ public class Robot extends TimedRobot {
     }
     */
 
-    if(timer < 1000){
+    /*if(timer < 1000){
       ledMode.setNumber(3);
       autoSpeeds = limelight.getSpeeds();
       drive.SetPower(autoSpeeds[0], autoSpeeds[1]);
@@ -240,7 +249,7 @@ public class Robot extends TimedRobot {
     }
     else if(timer < 15000){
       intake.autoShoot(false);
-    }
+    }*/
 
     //Part 1: MR: -15.8571 ML: -12.1667 SR: -15.8571 SL: -12.1667
     //Part 2: MR: 56.3101 ML: -88.8371 SR: 56.3101 SL: -88.8371
@@ -268,7 +277,7 @@ public class Robot extends TimedRobot {
     //climb.climberPos(robotContainer.buttonB12Released(), robotContainer.buttonB14Released(), robotContainer.buttonB16Released());
     //climbU.schedule();
     drive.shiftPiston(robotContainer.rBumper(), robotContainer.lBumper());
-    drive.setDefaultCommand(tankDrive);
+
     robotContainer.aPad.whileHeld(align);
     //turret.turretLoop();
     //its me again

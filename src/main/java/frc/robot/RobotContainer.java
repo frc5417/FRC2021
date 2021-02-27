@@ -10,7 +10,6 @@ import edu.wpi.first.wpilibj2.command.RamseteCommand;
 import edu.wpi.first.wpilibj.controller.PIDController;
 import edu.wpi.first.wpilibj.controller.RamseteController;
 import edu.wpi.first.wpilibj.controller.SimpleMotorFeedforward;
-import edu.wpi.first.wpilibj.controller.SimpleMotorFeedforward;
 import edu.wpi.first.wpilibj.geometry.*;
 import java.util.List;
 import edu.wpi.first.wpilibj.kinematics.*; 
@@ -181,6 +180,62 @@ public class RobotContainer{
     }
     public boolean buttonB16Released(){
         return buttonBoard.getRawButtonReleased(16);
+    }
+
+    public Command getSimpleAuto(Drive drivetrain){
+            var autoVoltageConstraint = new DifferentialDriveVoltageConstraint(
+            new SimpleMotorFeedforward(Constants.kSAuto, Constants.kVAuto, Constants.kAAuto),
+            Constants.kinematics,
+            10);
+    
+            //trajectoryconfig parameters are in meters. may need to fix numbers
+            TrajectoryConfig config = 
+            new TrajectoryConfig(9, 9).setKinematics(Constants.kinematics).addConstraint(autoVoltageConstraint);
+    
+            Trajectory exampleTrajectory = TrajectoryGenerator.generateTrajectory(
+                // Start at the origin facing the +X direction
+                new Pose2d(0, 0, new Rotation2d(0)),
+                // Pass through these two interior waypoints, making an 's' curve path
+                List.of(
+                    new Translation2d(1, 0),
+                    new Translation2d(2, 0)
+                ),
+                // End 3 meters straight ahead of where we started, facing forward
+                new Pose2d(3, 0, new Rotation2d(0)),
+                // Pass config
+                config
+            );
+            //System.out.println(exampleTrajectory);
+    
+            drivetrain.resetOdometry(exampleTrajectory.getInitialPose());
+    
+            RamseteCommand ramseteCommand = new RamseteCommand(
+            exampleTrajectory,
+            drivetrain::getPose,
+            new RamseteController(),
+            new SimpleMotorFeedforward(Constants.kSAuto,
+                                       Constants.kVAuto,
+                                       Constants.kAAuto),
+            Constants.kinematics,
+            //problem: getwheelspeeds and tankdrivevolts need to be functional interfaces
+            drivetrain::getWheelSpeeds,
+            /*drivetrain.getLeftMotor().getPIDController(),
+            drivetrain.getRightMotor().getPIDController(),*/
+            new PIDController(Constants.kPAuto, Constants.drivekI, 0),
+            new PIDController(Constants.kPAuto, Constants.drivekI, 0),
+            // RamseteCommand passes volts to the callback
+            drivetrain::tankDriveVolts, 
+            drivetrain
+            );
+            System.out.println("you have gone past the ramsete command");
+    
+            // Reset odometry to the starting pose of the trajectory.
+            drivetrain.resetOdometry(exampleTrajectory.getInitialPose());
+    
+            // uh i really do not know if this will work
+            return ramseteCommand;//.andThen(() -> drivetrain.tankDriveVolts(0, 0));
+    
+
     }
 
 }

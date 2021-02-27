@@ -23,6 +23,7 @@ import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 import frc.robot.Constants;
 import frc.robot.Robot;
 import frc.robot.RobotContainer;
+import frc.robot.commands.TankDrive;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.geometry.Pose2d;
 import edu.wpi.first.wpilibj.geometry.Rotation2d;
@@ -34,6 +35,7 @@ import edu.wpi.first.wpilibj.util.Units;
 
 import java.lang.Math;
 import edu.wpi.first.wpilibj.Solenoid;
+import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.Compressor;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.SPI;
@@ -44,7 +46,7 @@ import frc.robot.subsystems.*;
  */
 public class Drive extends SubsystemBase {
   // Put methods for controlling this subsystem
-  // here. Call these from Commands.
+  // here. Call these from Commands.s
   
   public CANSparkMax driveSlaveL = new CANSparkMax(Constants.slaveLeftMotor, MotorType.kBrushless);
   public CANSparkMax driveMasterR = new CANSparkMax(Constants.masterRightMotor, MotorType.kBrushless);
@@ -74,7 +76,6 @@ public class Drive extends SubsystemBase {
 
 
   public Drive(){
-  
 /*
     driveMasterRight.setNeutralMode(NeutralMode.Coast);
     driveMasterLeft.setNeutralMode(NeutralMode.Coast);
@@ -96,6 +97,8 @@ public class Drive extends SubsystemBase {
     neoEncoderR.setVelocityConversionFactor(2*Math.PI*.1524);
 
     drive = new DifferentialDrive(driveMasterL, driveMasterR);
+    //driveMasterL->setSafetyEnabled(false);
+    //drive.setSafetyEnabled(false);
 
     driveOdom = new DifferentialDriveOdometry(Rotation2d.fromDegrees(getHeading()));
 
@@ -133,10 +136,12 @@ public class Drive extends SubsystemBase {
   }
 */
   public DifferentialDriveWheelSpeeds getWheelSpeeds(){
+    System.out.println("you have reached getWheelSpeeds");
     return new DifferentialDriveWheelSpeeds(neoEncoderL.getVelocity(), neoEncoderR.getVelocity());
   }
   
   public Pose2d getPose(){
+    System.out.println("you have reached getPose");
     return driveOdom.getPoseMeters();
   }
 
@@ -147,6 +152,7 @@ public class Drive extends SubsystemBase {
   }
 
   public void tankDriveVolts(double leftVolts, double rightVolts){
+    System.out.println("tankdrivevolts has been reached");
     driveMasterL.set(-leftVolts / RobotController.getBatteryVoltage());
     driveMasterR.set(rightVolts / RobotController.getBatteryVoltage());
     drive.feed();
