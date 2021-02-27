@@ -1,4 +1,3 @@
-
 /*----------------------------------------------------------------------------*/
 /* Copyright (c) 2018 FIRST. All Rights Reserved.                             */
 /* Open Source Software - may be modified and shared by FRC teams. The code   */
@@ -7,7 +6,6 @@
 /*----------------------------------------------------------------------------*/
 
 package frc.robot.subsystems;
-
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
@@ -20,6 +18,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import edu.wpi.first.wpilibj.DigitalInput;
 import frc.robot.Robot;
+import frc.robot.subsystems.Limelight;
 
 //test7
 public class Intake extends SubsystemBase {
@@ -63,7 +62,7 @@ public class Intake extends SubsystemBase {
       masterShoot.getPIDController().setI(Constants.shootkI);
       //slaveShoot.getPIDController().setI(Constants.shootkI);
       setPointConst = Constants.shootsetPointConstant*Constants.shootMaxRPM;
-      setPointVariable = Constants.shootsetPointVariable*Constants.shootMaxRPM;
+      setPointVariable = Robot.limelight.shootsetPointVariable*Constants.shootMaxRPM;
       
     }
     
@@ -128,10 +127,13 @@ public class Intake extends SubsystemBase {
             
       System.out.println(masterShoot.getEncoder().getVelocity() + " Motor ID: 12");
       //System.out.println(slaveShoot.getEncoder().getVelocity() + " Motor ID: 3");
-      masterShoot.getPIDController().setReference(setPointVariable, ControlType.kVelocity);
+      System.out.println("boop");
+      masterShoot.getPIDController().setReference(Robot.limelight.shootsetPointVariable*Constants.shootMaxRPM, ControlType.kVelocity);
+      System.out.println("baap");
+      System.out.println(masterShoot.getEncoder().getVelocity() + " Motor ID: 12");
       //slaveShoot.follow(masterShoot);
 
-      if(masterShoot.getEncoder().getVelocity() <= (Constants.shootsetPointVariable + 500) && masterShoot.getEncoder().getVelocity() >= (Constants.shootsetPointVariable - 500)){
+      if(masterShoot.getEncoder().getVelocity() <= (Robot.limelight.shootsetPointVariable + 500) && masterShoot.getEncoder().getVelocity() >= (Robot.limelight.shootsetPointVariable - 500)){
         internalBelt.set(-intakeSpeed);
         feeder.set(intakeSpeed);
       }
@@ -239,7 +241,7 @@ public class Intake extends SubsystemBase {
       masterShoot.getPIDController().setReference(setPointVariable, ControlType.kVelocity);
       //slaveShoot.follow(masterShoot);
 
-      if(masterShoot.getEncoder().getVelocity() <= (Constants.shootsetPointVariable + 500) && masterShoot.getEncoder().getVelocity() >= (Constants.shootsetPointVariable - 500)){
+      if(masterShoot.getEncoder().getVelocity() <= (Robot.limelight.shootsetPointVariable + 500) && masterShoot.getEncoder().getVelocity() >= (Robot.limelight.shootsetPointVariable - 500)){
         internalBelt.set(-intakeSpeed);
         feeder.set(intakeSpeed);
       }

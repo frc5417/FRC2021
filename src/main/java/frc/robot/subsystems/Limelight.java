@@ -26,7 +26,7 @@ public class Limelight extends SubsystemBase {
     double y;
 
     // Area of the target
-    double area;
+    public double area;
 
     // Skew of the robot
     double s;
@@ -141,7 +141,7 @@ public class Limelight extends SubsystemBase {
     public double[] getSpeeds(){
 
       // Constants used to calculate motor power for alignment
-      Double Kp = -Constants.Kp;
+      Double Kp =  (((.00222222222222222)*area)-(.021111111111111 ));
       Double KpDistance = -.05;
       //Double area_error = 3 - area;
       Double distance_adjust = Constants.distance_adjust;
@@ -173,7 +173,7 @@ public class Limelight extends SubsystemBase {
         //distance_adjust = KpDistance * distance_error;
         left_command += (steering_adjust);
         right_command += (steering_adjust);
-        Constants.shootsetPointVariable = -.2667532724*Math.pow(estimateDistance(), 2) + 45.55525781*estimateDistance() - 4994.499807;
+        //Constants.shootsetPointVariable = -.2667532724*Math.pow(estimateDistance(), 2) + 45.55525781*estimateDistance() - 4994.499807;
         /*left_command -= distance_adjust;
         right_command += distance_adjust;
         turret_command += steering_adjust;*/
