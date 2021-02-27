@@ -155,6 +155,7 @@ public class Drive extends SubsystemBase {
   }
 
   public void tankDriveVolts(double leftVolts, double rightVolts){
+    System.out.println("leftvolts: " + leftVolts + "rightvolts: " + rightVolts);
     driveMasterL.set(leftVolts / RobotController.getBatteryVoltage());
     driveMasterR.set(-rightVolts / RobotController.getBatteryVoltage());
     drive.feed();
