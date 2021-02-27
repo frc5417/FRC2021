@@ -91,16 +91,19 @@ public class Drive extends SubsystemBase {
     //according to api, neo encoder track distance based on full rotations, not individual encoder ticks.
     //units in meters
     neoEncoderL.setPositionConversionFactor(Math.PI*.1524 / Constants.driveGearingRatio);
-    neoEncoderR.setPositionConversionFactor(Math.PI*.1524 / -Constants.driveGearingRatio);
+    neoEncoderR.setPositionConversionFactor(Math.PI*.1524 / Constants.driveGearingRatio);
 
     neoEncoderL.setVelocityConversionFactor(Math.PI*.1524 / Constants.driveGearingRatio);
-    neoEncoderR.setVelocityConversionFactor(Math.PI*.1524 / -Constants.driveGearingRatio);
+    neoEncoderR.setVelocityConversionFactor(Math.PI*.1524 / Constants.driveGearingRatio);
 
     drive = new DifferentialDrive(driveMasterL, driveMasterR);
     //driveMasterL->setSafetyEnabled(false);
     //drive.setSafetyEnabled(false);
 
     driveOdom = new DifferentialDriveOdometry(Rotation2d.fromDegrees(getHeading()));
+
+
+
 
     driveMasterL.getPIDController().setP(Constants.drivekP);
     driveMasterR.getPIDController().setP(Constants.drivekP);
@@ -137,7 +140,7 @@ public class Drive extends SubsystemBase {
 */
   public DifferentialDriveWheelSpeeds getWheelSpeeds(){
     System.out.println("wheel speeds: " + new DifferentialDriveWheelSpeeds(neoEncoderL.getVelocity(), neoEncoderR.getVelocity()));
-    return new DifferentialDriveWheelSpeeds(neoEncoderL.getVelocity(), neoEncoderR.getVelocity());
+    return new DifferentialDriveWheelSpeeds(neoEncoderL.getVelocity(), -neoEncoderR.getVelocity());
   }
   
   public Pose2d getPose(){
@@ -182,6 +185,7 @@ public class Drive extends SubsystemBase {
   }
 
   public void SetPower(double leftPower, double rightPower){
+    
     driveMasterL.setIdleMode(IdleMode.kCoast);
     driveMasterR.setIdleMode(IdleMode.kCoast);
     driveSlaveL.setIdleMode(IdleMode.kCoast);
