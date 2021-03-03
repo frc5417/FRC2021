@@ -120,6 +120,9 @@ public class Drive extends SubsystemBase {
     driveSlaveR.getEncoder().setPosition(0);*/
     
     shifter = new Solenoid(0);
+    zeroReset();
+    gyro.zeroYaw();
+
   }
 
   public CANSparkMax getLeftMotor(){
@@ -187,10 +190,10 @@ public class Drive extends SubsystemBase {
 
   public void SetPower(double leftPower, double rightPower){
     
-    driveMasterL.setIdleMode(IdleMode.kCoast);
+    /*driveMasterL.setIdleMode(IdleMode.kCoast);
     driveMasterR.setIdleMode(IdleMode.kCoast);
     driveSlaveL.setIdleMode(IdleMode.kCoast);
-    driveSlaveR.setIdleMode(IdleMode.kCoast);
+    driveSlaveR.setIdleMode(IdleMode.kCoast);*/
 
     driveSlaveL.follow(driveMasterL);
     driveSlaveR.follow(driveMasterR);

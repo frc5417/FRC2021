@@ -80,6 +80,7 @@ public class Robot extends TimedRobot {
   public static Command turretShoot = new SetTurret(turret);
   //public static TrajectoryFollowing trajectoryFollowing = new TrajectoryFollowing();
   public static Compressor compressor;
+  public static Command auton = robotContainer.getSimpleAuto(drive);
   public static Command deployIntakePistons = new DeployIntakePistons(intake);
 
   public Command autonomousCommand;
@@ -133,6 +134,8 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void autonomousInit() {
+    drive.zeroReset();
+    drive.gyro.zeroYaw();
     //trajectoryFollowing.zeroHeading();
     //trajectoryFollowing.resetEncoders();
     
@@ -153,7 +156,7 @@ public class Robot extends TimedRobot {
     if (autonomousCommand != null) {
         autonomousCommand.schedule();
     }*/
-    robotContainer.getSimpleAuto(drive).schedule();
+    auton.schedule();
 
   }
 
@@ -163,9 +166,13 @@ public class Robot extends TimedRobot {
   @Override
   public void autonomousPeriodic() {
     CommandScheduler.getInstance().run();
+
     System.out.println("left distance: " + drive.getLeftDistance());
     System.out.println("right distance: " + drive.getRightDistance());
-
+    if(auton.isFinished())
+    {
+      drive.SetPower(0, 0);
+    }
 
     //timer += 20;
     //System.out.println(timer);
