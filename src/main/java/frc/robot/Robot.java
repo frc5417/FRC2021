@@ -11,6 +11,8 @@ package frc.robot;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.command.WaitCommand;
+import edu.wpi.first.wpilibj.geometry.Pose2d;
+import edu.wpi.first.wpilibj.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.Joystick; 
@@ -87,9 +89,12 @@ public class Robot extends TimedRobot {
  
   @Override
   public void robotInit() {
+
     m_chooser.setDefaultOption("Default Auto", kDefaultAuto);
     m_chooser.addOption("My Auto", kCustomAuto);
     SmartDashboard.putData("Auto choices", m_chooser);
+
+    drive.resetOdometry(new Pose2d(0, 0, new Rotation2d()));
     //drive.setDefaultCommand(tankDrive);
     
 
@@ -134,8 +139,9 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void autonomousInit() {
-    drive.zeroReset();
-    drive.gyro.zeroYaw();
+    drive.resetOdometry(new Pose2d(0, 0, new Rotation2d()));
+    //drive.zeroReset();
+    //drive.gyro.zeroYaw();
     //trajectoryFollowing.zeroHeading();
     //trajectoryFollowing.resetEncoders();
     
@@ -168,7 +174,10 @@ public class Robot extends TimedRobot {
     CommandScheduler.getInstance().run();
 
     System.out.println("left distance: " + drive.getLeftDistance());
-    System.out.println("right distance: " + drive.getRightDistance());
+    System.out.println("right distance: " + -drive.getRightDistance());
+    System.out.println("gyro yaw:" + drive.gyro.getYaw());
+    System.out.println("pose:" + drive.getPose());
+
     if(auton.isFinished())
     {
       drive.SetPower(0, 0);
@@ -276,6 +285,14 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void teleopPeriodic() {
+    System.out.println("pose:" + drive.getPose());
+    System.out.println("gyro heading:" + drive.gyro.getAngle());
+    System.out.println("gyro roll:" + drive.gyro.getRoll());
+    System.out.println("gyro pitch:" + drive.gyro.getPitch());
+    System.out.println("gyro yaw:" + drive.gyro.getYaw());
+    System.out.println("left distance: " + drive.getLeftDistance());
+    System.out.println("right distance: " + -drive.getRightDistance());
+
     limelight.shootsetPointVariable = (-4047.25 + (1699.79*(Math.floor(Math.log(limelight.area)*100)/100)));
     System.out.println("ta:" + ta.getDouble(0.0));
     System.out.println("log calculator thing" + (-4047.25 + (1699.79*(Math.floor(Math.log(limelight.area)*100)/100))));

@@ -8,6 +8,8 @@
 package frc.robot.subsystems;
 
 import com.kauailabs.navx.frc.AHRS;
+import com.kauailabs.navx.frc.AHRS.SerialDataType;
+
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.Subsystem;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
@@ -35,8 +37,10 @@ import edu.wpi.first.wpilibj.util.Units;
 
 import java.lang.Math;
 import edu.wpi.first.wpilibj.Solenoid;
+import edu.wpi.first.wpilibj.SerialPort.Port;
 import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.Compressor;
+import edu.wpi.first.wpilibj.I2C;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.SPI;
 import frc.robot.subsystems.*;
@@ -56,9 +60,12 @@ public class Drive extends SubsystemBase {
   public CANEncoder neoEncoderL = driveMasterL.getEncoder();
   public CANEncoder neoEncoderR = driveMasterR.getEncoder();
 
-  public AHRS gyro = new AHRS(SPI.Port.kMXP);
+  public AHRS gyro = new AHRS(Port.kUSB);
 
   TalonSRX turretMotor = new TalonSRX(9);
+
+
+  
   public Solenoid shifter;
   Compressor compressor;
   Limelight limelight = new Limelight();
@@ -142,12 +149,12 @@ public class Drive extends SubsystemBase {
   }
 */
   public DifferentialDriveWheelSpeeds getWheelSpeeds(){
-    System.out.println("wheel speeds: " + new DifferentialDriveWheelSpeeds(neoEncoderL.getVelocity(), neoEncoderR.getVelocity()));
+    System.out.println("wheel speeds: " + new DifferentialDriveWheelSpeeds(neoEncoderL.getVelocity(), -neoEncoderR.getVelocity()));
     return new DifferentialDriveWheelSpeeds(neoEncoderL.getVelocity(), -neoEncoderR.getVelocity());
   }
   
   public Pose2d getPose(){
-    System.out.println("poseMeters:"+ driveOdom.getPoseMeters()); 
+    //System.out.println("poseMeters:"+ driveOdom.getPoseMeters()); 
     return driveOdom.getPoseMeters();
   }
 
@@ -327,10 +334,11 @@ public class Drive extends SubsystemBase {
 
   public double getHeading(){
     return Math.IEEEremainder(gyro.getAngle(), 360);
+    //return -gyro.getYaw();
   }
 
   @Override
   public void periodic(){
-    driveOdom.update(Rotation2d.fromDegrees(getHeading()), neoEncoderL.getPosition(), neoEncoderR.getPosition());
+    driveOdom.update(Rotation2d.fromDegrees(getHeading()), neoEncoderL.getPosition(), -neoEncoderR.getPosition());
   }
 }
