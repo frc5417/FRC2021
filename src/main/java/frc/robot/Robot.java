@@ -27,7 +27,7 @@ import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.subsystems.*;
 import frc.robot.commands.*;
 import edu.wpi.first.wpilibj.Compressor;
-
+import edu.wpi.first.wpilibj.Timer;
 
 /**
  * The VM is configured to automatically run this class, and to call the
@@ -82,8 +82,9 @@ public class Robot extends TimedRobot {
   public static Command turretShoot = new SetTurret(turret);
   //public static TrajectoryFollowing trajectoryFollowing = new TrajectoryFollowing();
   public static Compressor compressor;
-  public static Command auton = robotContainer.getSimpleAuto(drive);
+  public static Command auton = robotContainer.slalomRun(drive);
   public static Command deployIntakePistons = new DeployIntakePistons(intake);
+  public static Timer time = new Timer();
 
   public Command autonomousCommand;
  
@@ -139,6 +140,7 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void autonomousInit() {
+    time.start();
     drive.resetOdometry(new Pose2d(0, 0, new Rotation2d()));
     //drive.zeroReset();
     //drive.gyro.zeroYaw();
@@ -173,10 +175,10 @@ public class Robot extends TimedRobot {
   public void autonomousPeriodic() {
     CommandScheduler.getInstance().run();
 
-    System.out.println("left distance: " + drive.getLeftDistance());
-    System.out.println("right distance: " + -drive.getRightDistance());
-    System.out.println("gyro yaw:" + drive.gyro.getYaw());
     System.out.println("pose:" + drive.getPose());
+    System.out.println("wheel speeds: " + drive.getWheelSpeeds());
+    System.out.println("time: " + time.get());
+
 
     if(auton.isFinished())
     {
@@ -285,19 +287,12 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void teleopPeriodic() {
-    System.out.println("pose:" + drive.getPose());
-    System.out.println("gyro heading:" + drive.gyro.getAngle());
-    System.out.println("gyro roll:" + drive.gyro.getRoll());
-    System.out.println("gyro pitch:" + drive.gyro.getPitch());
-    System.out.println("gyro yaw:" + drive.gyro.getYaw());
-    System.out.println("left distance: " + drive.getLeftDistance());
-    System.out.println("right distance: " + -drive.getRightDistance());
 
     limelight.shootsetPointVariable = (-4047.25 + (1699.79*(Math.floor(Math.log(limelight.area)*100)/100)));
-    System.out.println("ta:" + ta.getDouble(0.0));
+    /*System.out.println("ta:" + ta.getDouble(0.0));
     System.out.println("log calculator thing" + (-4047.25 + (1699.79*(Math.floor(Math.log(limelight.area)*100)/100))));
     System.out.println("Shoot set point" + limelight.shootsetPointVariable);
-    //System.out.println(robotContainer.pad.getPOV());
+    //System.out.println(robotContainer.pad.getPOV());*/
     intake.count += 20;
     //moveTurret.schedule();
     tankDrive.schedule();
@@ -344,14 +339,6 @@ public class Robot extends TimedRobot {
     
     //intake.runInternalBelt(pad.getRawButtonPressed(3)); 
     //intake.runFeeder(pad.getRawButtonPressed(3)); //check this to make sure its the right button
-
-    System.out.println("Master Motor Right Pos: " + drive.driveMasterR.getEncoder().getPosition());
-    System.out.println("Master Motor Left Pos: " + drive.driveMasterL.getEncoder().getPosition());
-    System.out.println("Slave Motor Right Pos: " + drive.driveSlaveR.getEncoder().getPosition());
-    System.out.println("Slave Motor Left Pos: " + drive.driveMasterL.getEncoder().getPosition());
-    
-
-
 
   }
 

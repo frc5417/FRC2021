@@ -40,7 +40,7 @@ public class Constants {
     public static final double kD = 16.3;
     public static final double maxVolts = 28;
 
-    public static final DifferentialDriveKinematics kinematics = new DifferentialDriveKinematics(Constants.driveTrain_width);
+    public static final DifferentialDriveKinematics kinematics = new DifferentialDriveKinematics(Constants.trackWidth);
     // ideal distance 90 inches
 
     //Shooter Constants
@@ -71,8 +71,8 @@ public class Constants {
     public static final double climberRLeft = -193;
     public static final double climberRRight = -214;
 
-    //Drive Constants
-    public static final double drivekP = .0312;
+    //Drive Constants 
+    public static final double drivekP = 5; //.0312;
     public static final double drivekI = .000000000001;
 
     //Auton Constants
@@ -81,7 +81,7 @@ public class Constants {
     public static final double kVAuto = 4.69; //units: volts*seconds/meters
     public static final double kAAuto = .179; //units: volts*seconds^2/meters
     public static final double kDAuto = 0;
-    public static final double kSAuto = .12; //units: volts
+    public static final double kSAuto = .20; //units: volts; original kS = .12
     public static final double kGAuto = 0;
     public static final double kCosAuto = 0;
     public static final double rSquaredAuto = .998;

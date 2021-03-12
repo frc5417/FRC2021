@@ -100,8 +100,8 @@ public class Drive extends SubsystemBase {
     neoEncoderL.setPositionConversionFactor(Math.PI*.1524 / Constants.driveGearingRatio);
     neoEncoderR.setPositionConversionFactor(Math.PI*.1524 / Constants.driveGearingRatio);
 
-    neoEncoderL.setVelocityConversionFactor(Math.PI*.1524 / Constants.driveGearingRatio);
-    neoEncoderR.setVelocityConversionFactor(Math.PI*.1524 / Constants.driveGearingRatio);
+    neoEncoderL.setVelocityConversionFactor((Math.PI*.1524 / Constants.driveGearingRatio) / 60);
+    neoEncoderR.setVelocityConversionFactor((Math.PI*.1524 / Constants.driveGearingRatio) / 60);
 
     drive = new DifferentialDrive(driveMasterL, driveMasterR);
     //driveMasterL->setSafetyEnabled(false);
@@ -197,10 +197,10 @@ public class Drive extends SubsystemBase {
 
   public void SetPower(double leftPower, double rightPower){
     
-    /*driveMasterL.setIdleMode(IdleMode.kCoast);
+    driveMasterL.setIdleMode(IdleMode.kCoast);
     driveMasterR.setIdleMode(IdleMode.kCoast);
     driveSlaveL.setIdleMode(IdleMode.kCoast);
-    driveSlaveR.setIdleMode(IdleMode.kCoast);*/
+    driveSlaveR.setIdleMode(IdleMode.kCoast);
 
     driveSlaveL.follow(driveMasterL);
     driveSlaveR.follow(driveMasterR);
@@ -218,7 +218,7 @@ public class Drive extends SubsystemBase {
     //driveSlaveR.set(Math.pow(rightPower, 3));
     //System.out.println("Left Speed: " + driveMasterL.getEncoder().getVelocity());
     //System.out.println("Right Speed: " + driveMasterR.getEncoder().getVelocity());
-    System.out.println("distance traveled teleop: right: " + getRightDistance() + " left: " + getLeftDistance());
+    //System.out.println("distance traveled teleop: right: " + getRightDistance() + " left: " + getLeftDistance());
   }
     /*else{
       driveMasterLeft.set(ControlMode.PercentOutput, 0);

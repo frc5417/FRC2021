@@ -12,14 +12,19 @@ import edu.wpi.first.wpilibj.controller.RamseteController;
 import edu.wpi.first.wpilibj.controller.SimpleMotorFeedforward;
 import edu.wpi.first.wpilibj.geometry.*;
 import java.util.List;
-import edu.wpi.first.wpilibj.kinematics.*; 
+import edu.wpi.first.wpilibj.kinematics.*;
 import edu.wpi.first.wpilibj.*;
 import edu.wpi.first.wpilibj2.command.button.*;
 import frc.robot.commands.*;
 import frc.robot.Robot;
 import edu.wpi.first.wpilibj.trajectory.constraint.DifferentialDriveVoltageConstraint;
+
+import java.io.IOException;
 import java.lang.Math;
+import java.nio.file.Path;
+
 import edu.wpi.first.wpilibj.Compressor;
+import edu.wpi.first.wpilibj.trajectory.TrajectoryUtil;
 
 public class RobotContainer{
 
@@ -237,6 +242,84 @@ public class RobotContainer{
     
 
     }
+
+    public Command slalomRun(Drive drivetrain){
+        var autoVoltageConstraint = new DifferentialDriveVoltageConstraint(
+        new SimpleMotorFeedforward(Constants.kSAuto, Constants.kVAuto, Constants.kAAuto),
+        Constants.kinematics,
+        10);
+
+        //trajectoryconfig parameters are in meters. may need to fix numbers
+        TrajectoryConfig config = 
+        new TrajectoryConfig(9, 9).setKinematics(Constants.kinematics).addConstraint(autoVoltageConstraint);
+
+        String slalomJSON = "paths/SlalomV5.wpilib.json";
+
+        Trajectory slalomTrajectory = new Trajectory();
+        try {
+            Path trajectoryPath = Filesystem.getDeployDirectory().toPath().resolve(slalomJSON);
+            slalomTrajectory = TrajectoryUtil.fromPathweaverJson(trajectoryPath);
+          } catch (IOException ex) {
+            DriverStation.reportError("Unable to open trajectory: " + slalomJSON, ex.getStackTrace());
+          }
+            // Start at the origin facing the +X direction
+            /*
+            new Pose2d(.8, .8, new Rotation2d(0)),
+            // Pass through these two interior waypoints, making an 's' curve path
+            List.of(
+                new Translation2d(1.5, 1),
+                new Translation2d(2.3, 1.5),
+                new Translation2d(3.05, 2.3),
+                new Translation2d(4.6, 2.4),
+                new Translation2d(6.1, 2.3),
+                new Translation2d(7.6, .8),
+                new Translation2d(8.3, 1.5),
+                new Translation2d(7.6, 2.3),
+                new Translation2d(6.1, .8),
+                new Translation2d(4.6, .6),
+                new Translation2d(3.05, .76),
+                new Translation2d(1.5, 2.3)
+            ),
+            // End 3 meters straight ahead of where we started, facing forward
+            new Pose2d(.8, 2.3, new Rotation2d(Math.PI)),
+            // Pass config
+            config
+            
+
+        );
+        */
+        //System.out.println(exampleTrajectory);
+
+        drivetrain.resetOdometry(slalomTrajectory.getInitialPose());
+
+        RamseteCommand ramseteCommand = new RamseteCommand(
+        slalomTrajectory,
+        drivetrain::getPose,
+        new RamseteController(),
+        new SimpleMotorFeedforward(Constants.kSAuto,
+                                   Constants.kVAuto,
+                                   Constants.kAAuto),
+        Constants.kinematics,
+        //problem: getwheelspeeds and tankdrivevolts need to be functional interfaces
+        drivetrain::getWheelSpeeds,
+        /*drivetrain.getLeftMotor().getPIDController(),
+        drivetrain.getRightMotor().getPIDController(),*/
+        new PIDController(Constants.drivekP, Constants.drivekI, 0),
+        new PIDController(Constants.drivekP, Constants.drivekI, 0),
+        // RamseteCommand passes volts to the callback
+        drivetrain::tankDriveVolts, 
+        drivetrain
+        );
+        System.out.println("you have gone past the ramsete command");
+
+        // Reset odometry to the starting pose of the trajectory.
+        drivetrain.resetOdometry(slalomTrajectory.getInitialPose());
+
+        // uh i really do not know if this will work
+        return ramseteCommand;//.andThen(() -> drivetrain.tankDriveVolts(0, 0));
+
+
+}
 
 }
 
