@@ -149,7 +149,6 @@ public class Drive extends SubsystemBase {
   }
 */
   public DifferentialDriveWheelSpeeds getWheelSpeeds(){
-    System.out.println("wheel speeds: " + new DifferentialDriveWheelSpeeds(neoEncoderL.getVelocity(), -neoEncoderR.getVelocity()));
     return new DifferentialDriveWheelSpeeds(neoEncoderL.getVelocity(), -neoEncoderR.getVelocity());
   }
   

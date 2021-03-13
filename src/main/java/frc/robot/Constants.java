@@ -72,16 +72,16 @@ public class Constants {
     public static final double climberRRight = -214;
 
     //Drive Constants 
-    public static final double drivekP = 5; //.0312;
-    public static final double drivekI = .000000000001;
+    public static final double drivekP = 7; //.0312;
+    public static final double drivekI = .0001;
 
     //Auton Constants
     public static final double driveGearingRatio = 18;
     public static final double kPAuto = 1.27;
-    public static final double kVAuto = 4.69; //units: volts*seconds/meters
-    public static final double kAAuto = .179; //units: volts*seconds^2/meters
+    public static final double kVAuto = 2.5; //units: volts*seconds/meters; original: 4.69
+    public static final double kAAuto = .36; //units: volts*seconds^2/meters; original: .179
     public static final double kDAuto = 0;
-    public static final double kSAuto = .20; //units: volts; original kS = .12
+    public static final double kSAuto = 1.2; //units: volts; original kS = .12
     public static final double kGAuto = 0;
     public static final double kCosAuto = 0;
     public static final double rSquaredAuto = .998;

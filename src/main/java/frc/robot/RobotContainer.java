@@ -253,7 +253,7 @@ public class RobotContainer{
         TrajectoryConfig config = 
         new TrajectoryConfig(9, 9).setKinematics(Constants.kinematics).addConstraint(autoVoltageConstraint);
 
-        String slalomJSON = "paths/SlalomV5.wpilib.json";
+        String slalomJSON = "paths/SlalomV17.wpilib.json";
 
         Trajectory slalomTrajectory = new Trajectory();
         try {
