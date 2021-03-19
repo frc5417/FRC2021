@@ -87,7 +87,7 @@ public class Robot extends TimedRobot {
   public static Timer time = new Timer();
 
   public Command autonomousCommand;
- 
+  public int autoTime;
   @Override
   public void robotInit() {
 
@@ -174,15 +174,21 @@ public class Robot extends TimedRobot {
   @Override
   public void autonomousPeriodic() {
     CommandScheduler.getInstance().run();
-
+    autoTime += .02;
     System.out.println("pose:" + drive.getPose());
     System.out.println("wheel speeds: " + drive.getWheelSpeeds());
     System.out.println("time: " + time.get());
-
+    SmartDashboard.putNumber("X-Position: ", drive.getPose().getX());
+    SmartDashboard.putNumber("Y-Position: ", drive.getPose().getY());
+    SmartDashboard.putNumber("Left Wheel Speed: ", drive.getWheelSpeeds().leftMetersPerSecond);
+    SmartDashboard.putNumber("Right Wheel Speed: ", drive.getWheelSpeeds().rightMetersPerSecond);
+    SmartDashboard.putNumber("Gyro Heading: ", drive.getHeading());
+    SmartDashboard.putNumber("Time: ", autoTime);
 
     if(auton.isFinished())
     {
       drive.SetPower(0, 0);
+      autoTime = 0;
     }
 
     //timer += 20;
