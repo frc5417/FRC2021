@@ -164,9 +164,10 @@ public class Drive extends SubsystemBase {
   }
 
   public void tankDriveVolts(double leftVolts, double rightVolts){
-    System.out.println("leftvolts: " + leftVolts + "rightvolts: " + rightVolts);
     driveMasterL.set(leftVolts / RobotController.getBatteryVoltage());
     driveMasterR.set(-rightVolts / RobotController.getBatteryVoltage());
+    SmartDashboard.putNumber("Left Volts Input: ", (leftVolts / RobotController.getBatteryVoltage()));
+    SmartDashboard.putNumber("Right Volts Input: ", (rightVolts / RobotController.getBatteryVoltage()));
     drive.feed();
   }
 
@@ -211,8 +212,8 @@ public class Drive extends SubsystemBase {
     driveSlaveRight.set(ControlMode.PercentOutput, -rightPower);
     */
 
-    driveMasterL.set(-Math.pow(leftPower, 3));
-    driveMasterR.set(Math.pow(rightPower, 3)); //inversions for bowser
+    driveMasterL.set(-leftPower);//-Math.pow(leftPower, 3));
+    driveMasterR.set(rightPower);//Math.pow(rightPower, 3)); //inversions for bowser
     //driveSlaveL.set(-Math.pow(leftPower, 3));
     //driveSlaveR.set(Math.pow(rightPower, 3));
     //System.out.println("Left Speed: " + driveMasterL.getEncoder().getVelocity());

@@ -91,10 +91,7 @@ public class Robot extends TimedRobot {
   @Override
   public void robotInit() {
 
-    m_chooser.setDefaultOption("Default Auto", kDefaultAuto);
-    m_chooser.addOption("My Auto", kCustomAuto);
-    SmartDashboard.putData("Auto choices", m_chooser);
-
+    autoTime = 0;
     drive.resetOdometry(new Pose2d(0, 0, new Rotation2d()));
     //drive.setDefaultCommand(tankDrive);
     
@@ -140,7 +137,6 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void autonomousInit() {
-    time.start();
     drive.resetOdometry(new Pose2d(0, 0, new Rotation2d()));
     //drive.zeroReset();
     //drive.gyro.zeroYaw();
@@ -173,8 +169,8 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void autonomousPeriodic() {
-    CommandScheduler.getInstance().run();
     autoTime += .02;
+    CommandScheduler.getInstance().run();
     System.out.println("pose:" + drive.getPose());
     System.out.println("wheel speeds: " + drive.getWheelSpeeds());
     System.out.println("time: " + time.get());
