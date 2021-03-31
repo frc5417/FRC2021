@@ -62,7 +62,7 @@ public class Intake extends SubsystemBase {
       masterShoot.getPIDController().setI(Constants.shootkI);
       //slaveShoot.getPIDController().setI(Constants.shootkI);
       setPointConst = Constants.shootsetPointConstant*Constants.shootMaxRPM;
-      setPointVariable = Robot.limelight.shootsetPointVariable*Constants.shootMaxRPM;
+      setPointVariable = -Robot.limelight.shootsetPointVariable*Constants.shootMaxRPM;
       
     }
     

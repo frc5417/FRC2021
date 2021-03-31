@@ -31,6 +31,7 @@ public class Limelight extends SubsystemBase {
     // Skew of the robot
     double s;
 
+    Double steering_adjust = 0.075;
     // Correct values to move the robot to align with the target, basically the motor power that is sent when a target is seen
     double left_command;
     double right_command;
@@ -142,10 +143,9 @@ public class Limelight extends SubsystemBase {
     public double[] getSpeeds(){
 
       // Constants used to calculate motor power for alignment
-      Double Kp =  (((.00222222222222222)*area)-(.021111111111111 ));
-      Double KpDistance = -.05;
-      //Double area_error = 3 - area;
-      Double distance_adjust = Constants.distance_adjust;
+      //Double Kp = (((.00222222222222222)*area)-(.021111111111111));
+      Double Kp = -(Constants.Kp);
+      System.out.println("Limelight Kp: " + Kp);
       Double min_command = Constants.min_command;
       left_command = 0;
       right_command = 0;
@@ -160,15 +160,24 @@ public class Limelight extends SubsystemBase {
         Double heading_error = -x;
         Double distance_error = -y;
          //Double distance_error = estimateDistance() - getIdealDistance();
-        Double steering_adjust = 0.075;
+        steering_adjust = (Kp)*heading_error;
         // Determine power based on the horizontal offset
-        if (x > .1)
+        if (x > 1)
         {
-                steering_adjust = Kp*heading_error - min_command;
+                if(steering_adjust <= min_command)
+                {
+                  steering_adjust = min_command;
+                }
         }
-        else if (x < -.1)
+        else if (x < -1)
         {
-                steering_adjust = Kp*heading_error + min_command;
+                if(steering_adjust >= -min_command)
+                {
+                  steering_adjust = -min_command;
+                }
+        }
+        else {
+                steering_adjust = 0.0;
         }
         
         //distance_adjust = KpDistance * distance_error;

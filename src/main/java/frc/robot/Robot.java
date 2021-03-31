@@ -290,8 +290,8 @@ public class Robot extends TimedRobot {
   @Override
   public void teleopPeriodic() {
 
-    limelight.shootsetPointVariable = (-4047.25 + (1699.79*(Math.floor(Math.log(limelight.area)*100)/100)));
-    /*System.out.println("ta:" + ta.getDouble(0.0));
+    limelight.shootsetPointVariable = -(-4047.25 + (1699.79*(Math.floor(Math.log(limelight.area)*100)/100)));
+    System.out.println("ta:" + ta.getDouble(0.0));
     System.out.println("log calculator thing" + (-4047.25 + (1699.79*(Math.floor(Math.log(limelight.area)*100)/100))));
     System.out.println("Shoot set point" + limelight.shootsetPointVariable);
     //System.out.println(robotContainer.pad.getPOV());*/

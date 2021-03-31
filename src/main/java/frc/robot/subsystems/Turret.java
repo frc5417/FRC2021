@@ -17,6 +17,7 @@ public class Turret extends SubsystemBase{
     public int count;
     Timer timer = new Timer();
 
+    
     public Turret(){
         turret.config_kP(0, Constants.turretkP);
         turret.config_kI(0, Constants.turretkI);

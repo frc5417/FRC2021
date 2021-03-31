@@ -235,10 +235,11 @@ public class Drive extends SubsystemBase {
       driveSlaveLeft.set(ControlMode.PercentOutput, leftPower);
       driveSlaveRight.set(ControlMode.PercentOutput, -rightPower);*/
       
+      driveSlaveL.follow(driveMasterL);
+      driveSlaveR.follow(driveMasterR);
+
       driveMasterL.set(leftPower);
       driveMasterR.set(rightPower);
-      driveSlaveL.set(leftPower);
-      driveSlaveR.set(rightPower);
       
   
     }
