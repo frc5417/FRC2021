@@ -165,7 +165,7 @@ public class Drive extends SubsystemBase {
 
   public void tankDriveVolts(double leftVolts, double rightVolts){
     driveMasterL.set(leftVolts / RobotController.getBatteryVoltage());
-    driveMasterR.set(-rightVolts / RobotController.getBatteryVoltage());
+    driveMasterR.set(-rightVolts / RobotController.getBatteryVoltage()); 
     SmartDashboard.putNumber("Left Volts Input: ", (leftVolts / RobotController.getBatteryVoltage()));
     SmartDashboard.putNumber("Right Volts Input: ", (rightVolts / RobotController.getBatteryVoltage()));
     drive.feed();
@@ -212,14 +212,15 @@ public class Drive extends SubsystemBase {
     driveSlaveRight.set(ControlMode.PercentOutput, -rightPower);
     */
 
-    driveMasterL.set(-leftPower);//-Math.pow(leftPower, 3));
-    driveMasterR.set(rightPower);//Math.pow(rightPower, 3)); //inversions for bowser
+    driveMasterL.set(-leftPower);
+    driveMasterR.set(rightPower); //inversions for bowser
     //driveSlaveL.set(-Math.pow(leftPower, 3));
     //driveSlaveR.set(Math.pow(rightPower, 3));
     //System.out.println("Left Speed: " + driveMasterL.getEncoder().getVelocity());
     //System.out.println("Right Speed: " + driveMasterR.getEncoder().getVelocity());
     //System.out.println("distance traveled teleop: right: " + getRightDistance() + " left: " + getLeftDistance());
   }
+
     /*else{
       driveMasterLeft.set(ControlMode.PercentOutput, 0);
       driveMasterRight.set(ControlMode.PercentOutput, 0);
@@ -305,23 +306,28 @@ public class Drive extends SubsystemBase {
     } else if(button == false) { 
         toggle = true; // Button has been released, so this allows a re-press to activate the code above.
     }
-*/if(buttonAuto){
+    */
+    
+if(buttonAuto){
     toggle = true;
   }
   if(buttonAutoOff){
     toggle = false;
   }
   if(toggle){
-    if((Math.abs(Math.pow(Robot.robotContainer.leftSpeed(), 3)) >= .729 && Math.abs(driveMasterL.getEncoder().getVelocity()) >= 5000) && (Math.abs(Math.pow(Robot.robotContainer.rightSpeed(), 3)) >= .729 && Math.abs(driveMasterR.getEncoder().getVelocity()) >= 5000)){
+    
+    if((Math.abs(Math.pow(Robot.robotContainer.leftSpeed(), 3)) >= .729 && Math.abs(driveMasterL.getEncoder().getVelocity()) >= 1.78) && (Math.abs(Math.pow(Robot.robotContainer.rightSpeed(), 3)) >= .729 && Math.abs(driveMasterR.getEncoder().getVelocity()) >= 1.78)){
       shifter.set(true);
     }
-    else if(Math.abs(driveMasterL.getEncoder().getVelocity()) <= 3000 && Math.abs(driveMasterR.getEncoder().getVelocity()) <= 3000){
+    else if(Math.abs(driveMasterL.getEncoder().getVelocity()) <= 1.33 && Math.abs(driveMasterR.getEncoder().getVelocity()) <= 1.33){
       shifter.set(false);
     }
+    
   }
   else{
     shifter.set(false);
   }
+ 
 
 /*
     if(buttonL && buttonH == false){

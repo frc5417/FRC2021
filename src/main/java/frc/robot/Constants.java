@@ -44,11 +44,11 @@ public class Constants {
     // ideal distance 90 inches
 
     //Shooter Constants
-    public static final double shootkP = -.09; //9e-20; 
+    public static final double shootkP = -100; //9e-20; 
     public static final double shootkI = 0; //7e-52;
     public static final double shootkD = 0; 
     public static final double shootkIz = 0; 
-    public static final double shootkFF = 0.00000005; //add 5 
+    public static final double shootkFF = 0.000000033; //add 5 
     public static final double shootkMaxOutput = 1; 
     public static final double shootkMinOutput = -1;
     public static final double shootMaxRPM = 5700;

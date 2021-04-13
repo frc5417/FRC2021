@@ -127,13 +127,13 @@ public class Intake extends SubsystemBase {
             
       System.out.println(masterShoot.getEncoder().getVelocity() + " Motor ID: 12");
       //System.out.println(slaveShoot.getEncoder().getVelocity() + " Motor ID: 3");
-      System.out.println("boop");
+      //System.out.println("boop");
       masterShoot.getPIDController().setReference(Robot.limelight.shootsetPointVariable*Constants.shootMaxRPM, ControlType.kVelocity);
-      System.out.println("baap");
+      //System.out.println("baap");
       System.out.println(masterShoot.getEncoder().getVelocity() + " Motor ID: 12");
       //slaveShoot.follow(masterShoot);
 
-      if(masterShoot.getEncoder().getVelocity() <= (Robot.limelight.shootsetPointVariable + 500) && masterShoot.getEncoder().getVelocity() >= (Robot.limelight.shootsetPointVariable - 500)){
+      if(masterShoot.getEncoder().getVelocity() <= (Robot.limelight.shootsetPointVariable + 100) && masterShoot.getEncoder().getVelocity() >= (Robot.limelight.shootsetPointVariable - 100)){
         internalBelt.set(-intakeSpeed);
         feeder.set(intakeSpeed);
       }

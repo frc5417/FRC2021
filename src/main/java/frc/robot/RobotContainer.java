@@ -253,7 +253,7 @@ public class RobotContainer{
         TrajectoryConfig config = 
         new TrajectoryConfig(9, 9).setKinematics(Constants.kinematics).addConstraint(autoVoltageConstraint);
 //almost perfect paths: 17, 28 (28 is winning path)
-        String slalomJSON = "paths/BarrelV2.wpilib.json";//"paths/SlalomV28.wpilib.json";
+        String slalomJSON = "paths/output/BounceV10.wpilib.json";//"paths/SlalomV28.wpilib.json";
 
         Trajectory slalomTrajectory = new Trajectory();
         try {
