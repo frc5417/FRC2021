@@ -9,8 +9,9 @@ public class Constants {
     public static final int slaveLeftMotor = 15; // actual 15 test 3
     public static final int LClimb = 13;
     public static final int RClimb = 2;
-    public static final int intakeRoller = 6;
-    public static final int intakeMotorTop = 5;
+    public static final int intakeRoller = 5;
+    public static final int intakePanRoller = 7;
+    public static final int intakeMotorTop = 6;
     public static final int intakeMotorBottom = 4;
     public static final int shooterMaster = 12;
     public static final int shooterSlave = 3;

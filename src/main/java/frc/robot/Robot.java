@@ -310,7 +310,7 @@ public class Robot extends TimedRobot {
     //its me again
     turret.turretSetZero(robotContainer.xButton());
     turret.moveTurret(robotContainer.pad.getPOV());
-    turret.turretPosMove(robotContainer.yButtonReleased(), robotContainer.bButtonReleased());
+    //turret.turretPosMove(robotContainer.yButtonReleased(), robotContainer.bButtonReleased());
     //System.out.println("Selected Sensor Pos: " + turret.getTurretSensorPos());
     //intake.shoot(robotContainer.yButtonM());
     /*

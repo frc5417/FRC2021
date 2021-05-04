@@ -99,7 +99,7 @@ public class Climb extends SubsystemBase {
       if(buttonCenter && (buttonTriggerLeft == 0 && buttonTriggerRight == 0)){
         toggleR = true;
         toggleL = true;
-        Robot.turret.turretPosMove(true, false);
+        //Robot.turret.turretPosMove(true, false);
         motorR.getPIDController().setReference(climbRCenter, ControlType.kPosition);
         motorL.getPIDController().setReference(climbLCenter, ControlType.kPosition);
 
@@ -107,7 +107,7 @@ public class Climb extends SubsystemBase {
       else if(buttonLeft && (buttonTriggerLeft == 0 && buttonTriggerRight == 0)){
         toggleR = true;
         toggleL = true;
-        Robot.turret.turretPosMove(true, false);
+        //Robot.turret.turretPosMove(true, false);
         motorR.getPIDController().setReference(climbRLeft, ControlType.kPosition);
         motorL.getPIDController().setReference(climbLLeft, ControlType.kPosition);
 
@@ -115,7 +115,7 @@ public class Climb extends SubsystemBase {
       else if(buttonRight && (buttonTriggerLeft == 0 && buttonTriggerRight == 0)){
         toggleR = true;
         toggleL = true;
-        Robot.turret.turretPosMove(true, false);
+        //Robot.turret.turretPosMove(true, false);
         motorR.getPIDController().setReference(climbRRight, ControlType.kPosition);
         motorL.getPIDController().setReference(climbLRight, ControlType.kPosition);
 
@@ -123,18 +123,18 @@ public class Climb extends SubsystemBase {
       if(buttonDirectionUp){
         toggleR = false;
         toggleL = false;
-        Robot.turret.turretPosMove(true, false);
+        //Robot.turret.turretPosMove(true, false);
         climbPower = .5;
       }
       if(buttonDirectionDown){
         toggleR = false;
         toggleL = false;
-        Robot.turret.turretPosMove(true, false);
+        //Robot.turret.turretPosMove(true, false);
         climbPower = -.5;
       }
       if(buttonTriggerRight != 0){
         toggleR = false;
-        Robot.turret.turretPosMove(true, false);
+        //Robot.turret.turretPosMove(true, false);
         motorR.set(climbPower);
       }
       else if (toggleR == false && buttonTriggerRight == 0){
@@ -142,7 +142,7 @@ public class Climb extends SubsystemBase {
       }
       if(buttonTriggerLeft != 0){
         toggleL = false;
-        Robot.turret.turretPosMove(true, false);
+        //Robot.turret.turretPosMove(true, false);
         motorL.set(climbPower);
       }
       else if (toggleL == false && buttonTriggerLeft == 0){

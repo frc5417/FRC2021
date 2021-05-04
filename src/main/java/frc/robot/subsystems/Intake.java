@@ -12,6 +12,7 @@ import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.ControlType;
+import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -36,7 +37,8 @@ public class Intake extends SubsystemBase {
     boolean ballFeederToggle = false;
     boolean feederFlag = true;
 
-    public WPI_VictorSPX rollerBar;//rollerbar               //ask build which ports theyll use
+    public CANSparkMax rollerBar;//rollerbar
+    public CANSparkMax agitator;               //ask build which ports theyll use
     public WPI_VictorSPX internalBelt;//internal belt thing
     public WPI_VictorSPX feeder;//the one that puts it in the shooter
     public CANSparkMax masterShoot =  new CANSparkMax(Constants.shooterMaster, MotorType.kBrushless);
@@ -48,11 +50,11 @@ public class Intake extends SubsystemBase {
     double setPointConst;
     
     public Intake(){
-      rollerBar = new WPI_VictorSPX(Constants.intakeRoller);
+      rollerBar = new CANSparkMax(Constants.intakeRoller, MotorType.kBrushless);
+      agitator = new CANSparkMax(Constants.intakePanRoller, MotorType.kBrushless);
       internalBelt = new WPI_VictorSPX(Constants.intakeMotorTop);
       feeder = new WPI_VictorSPX(Constants.intakeMotorBottom);
 
-      rollerBar.setNeutralMode(NeutralMode.Coast);
       internalBelt.setNeutralMode(NeutralMode.Coast);
       feeder.setNeutralMode(NeutralMode.Coast);
       masterShoot.getPIDController().setFF(Constants.shootkFF);
@@ -70,7 +72,8 @@ public class Intake extends SubsystemBase {
 
   public void stopIntake(){//yoinked from 2019 code, is it even useful?
     //turns off all intake motors
-    rollerBar.set(ControlMode.PercentOutput,0);
+    rollerBar.set(0);
+    agitator.set(0);
     internalBelt.set(ControlMode.PercentOutput,0);
     feeder.set(ControlMode.PercentOutput,0);
   }
@@ -83,6 +86,7 @@ public class Intake extends SubsystemBase {
 
     if(buttonForward != 0 && buttonBackward == 0){
       rollerBar.set(rollerSpeed);
+      agitator.set(-rollerSpeed);
       /*if(ballFeederCounter.get()){
         ballInternalToggle = true;
       }
@@ -94,7 +98,7 @@ public class Intake extends SubsystemBase {
       }*/
 
       //if(ballFeederCounter.get() == false){
-        feeder.set(intakeSpeed);
+        feeder.set(-intakeSpeed);
         internalBelt.set(-intakeSpeed);
         //count = 0;
       //}
@@ -113,13 +117,16 @@ public class Intake extends SubsystemBase {
     }    
     else if(buttonBackward != 0 && buttonForward == 0){
       rollerBar.set(-rollerSpeed);
+      agitator.set(rollerSpeed);
       internalBelt.set(intakeSpeed);
-      feeder.set(-intakeSpeed);
+      feeder.set(intakeSpeed);
     }
     else if(buttonIn && buttonOut == false){
       rollerBar.set(rollerSpeed);
+      agitator.set(-rollerSpeed);
     }else if(buttonOut && buttonIn == false){
       rollerBar.set(-rollerSpeed);
+      agitator.set(rollerSpeed);
     }
     else if(buttonShoot){
       /*masterShoot.set(-1);
@@ -135,7 +142,7 @@ public class Intake extends SubsystemBase {
 
       if(masterShoot.getEncoder().getVelocity() <= (Robot.limelight.shootsetPointVariable + 100) && masterShoot.getEncoder().getVelocity() >= (Robot.limelight.shootsetPointVariable - 100)){
         internalBelt.set(-intakeSpeed);
-        feeder.set(intakeSpeed);
+        feeder.set(-intakeSpeed);
       }
     }
     else{
@@ -143,6 +150,7 @@ public class Intake extends SubsystemBase {
       masterShoot.getPIDController().setReference(0, ControlType.kVelocity);
       //slaveShoot.set(0);
       rollerBar.set(0);
+      agitator.set(0);
       internalBelt.set(0);
       feeder.set(0);
     }
@@ -171,7 +179,7 @@ public class Intake extends SubsystemBase {
     if(button){
       rollerBar.set(-intakeSpeed);
     }else{
-      rollerBar.setNeutralMode(NeutralMode.Brake);
+      rollerBar.setIdleMode(IdleMode.kCoast);
     }
   }
   public void runInternalBelt(boolean button){
