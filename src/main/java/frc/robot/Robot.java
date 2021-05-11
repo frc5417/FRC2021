@@ -331,7 +331,16 @@ public class Robot extends TimedRobot {
     CommandScheduler.getInstance().run();
     
     if (robotContainer.aButton()){
-      limelight.shootsetPointVariable = (3.16*Math.pow(limelight.getY(), 2) - 21.25*(limelight.getY()) + 4158.86);//-(-4047.25 + (1699.79*(Math.floor(Math.log(limelight.area)*100)/100)));
+      //limelight.shootsetPointVariable = 4100;//(3.16*Math.pow((limelight.getY() - 15), 2) - 21.25*(limelight.getY() - 15) + 4158.86); //-(-4047.25 + (1699.79*(Math.floor(Math.log(limelight.area)*100)/100)));
+      if(limelight.getY() < 7){
+        limelight.shootsetPointVariable = 4100;
+      } else if(limelight.getY() < 8){
+        limelight.shootsetPointVariable = 4000;
+      } else if(limelight.getY() < 11.5){
+        limelight.shootsetPointVariable = 3900;
+      } else {
+        limelight.shootsetPointVariable = 3750;
+      }
       ledMode.setNumber(3);
     }
     else{

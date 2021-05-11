@@ -57,7 +57,7 @@ public class Intake extends SubsystemBase {
 
       internalBelt.setNeutralMode(NeutralMode.Coast);
       feeder.setNeutralMode(NeutralMode.Coast);
-      masterShoot.getPIDController().setFF(Constants.shootkFF);
+      //masterShoot.getPIDController().setFF(Constants.shootkFF);
       //slaveShoot.getPIDController().setFF(Constants.shootkFF);
       masterShoot.getPIDController().setP(Constants.shootkP);
       //slaveShoot.getPIDController().setP(Constants.shootkP);
@@ -141,13 +141,14 @@ public class Intake extends SubsystemBase {
       //slaveShoot.follow(masterShoot);
 
       if(masterShoot.getEncoder().getVelocity() <= (Robot.limelight.shootsetPointVariable + 100) && masterShoot.getEncoder().getVelocity() >= (Robot.limelight.shootsetPointVariable - 100)){
-        internalBelt.set(-intakeSpeed);
-        feeder.set(-intakeSpeed);
+        internalBelt.set(intakeSpeed);
+        feeder.set(intakeSpeed);
       }
     }
     else{
       masterShoot.set(0);
       masterShoot.getPIDController().setReference(0, ControlType.kVelocity);
+
       //slaveShoot.set(0);
       rollerBar.set(0);
       agitator.set(0);
@@ -249,7 +250,8 @@ public class Intake extends SubsystemBase {
       masterShoot.getPIDController().setReference(setPointVariable, ControlType.kVelocity);
       //slaveShoot.follow(masterShoot);
 
-      if(masterShoot.getEncoder().getVelocity() <= (Robot.limelight.shootsetPointVariable + 500) && masterShoot.getEncoder().getVelocity() >= (Robot.limelight.shootsetPointVariable - 500)){
+      if(masterShoot.getEncoder().getVelocity() <= (Robot.limelight.
+      shootsetPointVariable + 500) && masterShoot.getEncoder().getVelocity() >= (Robot.limelight.shootsetPointVariable - 500)){
         internalBelt.set(-intakeSpeed);
         feeder.set(intakeSpeed);
       }

@@ -44,8 +44,9 @@ public class Constants {
     public static final DifferentialDriveKinematics kinematics = new DifferentialDriveKinematics(Constants.trackWidth);
     // ideal distance 90 inches
 
+
     //Shooter Constants
-    public static final double shootkP = -100; //9e-20; 
+    public static final double shootkP = .000000035; //9e-20; 
     public static final double shootkI = 0; //7e-52;
     public static final double shootkD = 0; 
     public static final double shootkIz = 0; 
