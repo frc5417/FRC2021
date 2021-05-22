@@ -204,6 +204,19 @@ public class Drive extends SubsystemBase {
 
     driveSlaveL.follow(driveMasterL);
     driveSlaveR.follow(driveMasterR);
+
+    if(Math.abs(leftPower) > .1){
+      driveMasterL.set(-leftPower);
+    } else {
+      driveMasterL.set(0);
+    }
+    if(Math.abs(rightPower) > .1){
+      driveMasterR.set(rightPower);
+    } else {
+      driveMasterR.set(0);
+    }
+
+
     //if (!((leftPower < .1)&&(leftPower > -.1) || (rightPower < .1)&&(rightPower > -.1))){
     /*  
     driveMasterLeft.set(ControlMode.PercentOutput, -leftPower);
@@ -212,8 +225,8 @@ public class Drive extends SubsystemBase {
     driveSlaveRight.set(ControlMode.PercentOutput, -rightPower);
     */
 
-    driveMasterL.set(-leftPower);
-    driveMasterR.set(rightPower); //inversions for bowser
+    
+     //inversions for bowser
     //driveSlaveL.set(-Math.pow(leftPower, 3));
     //driveSlaveR.set(Math.pow(rightPower, 3));
     //System.out.println("Left Speed: " + driveMasterL.getEncoder().getVelocity());

@@ -47,7 +47,7 @@ public class AutoAlign extends CommandBase {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    if(Math.abs(Robot.limelight.getX()) < 1 && Math.abs(Robot.limelight.getY()) < 1){
+    if(Math.abs(Robot.limelight.getX()) < 1){
       return true;
     }
     return false;

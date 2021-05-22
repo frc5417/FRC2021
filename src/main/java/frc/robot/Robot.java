@@ -85,8 +85,10 @@ public class Robot extends TimedRobot {
   public static Command auton = robotContainer.slalomRun(drive);
   public static Command deployIntakePistons = new DeployIntakePistons(intake);
   public static Timer time = new Timer();
+  public static Command autoShoot = new AutoShoot(intake);
+  public static Command autoAlign = new AutoAlign(limelight);
 
-  public Command autonomousCommand;
+  public Command autonomousCommand = new SequentialCommandGroup(auton, autoAlign, autoShoot);
   public int autoTime;
   @Override
   public void robotInit() {
@@ -121,6 +123,16 @@ public class Robot extends TimedRobot {
     limelight.setArea(ta);
     limelight.setV(tv);
     stream.setNumber(2);
+
+    if(limelight.getY() < 7){
+      limelight.shootsetPointVariable = 4100;
+    } else if(limelight.getY() < 8){
+      limelight.shootsetPointVariable = 4000;
+    } else if(limelight.getY() < 11.5){
+      limelight.shootsetPointVariable = 3900;
+    } else {
+      limelight.shootsetPointVariable = 3750;
+    }
 
   }
 
@@ -160,7 +172,7 @@ public class Robot extends TimedRobot {
     if (autonomousCommand != null) {
         autonomousCommand.schedule();
     }*/
-    auton.schedule();
+    autonomousCommand.schedule();
 
   }
 
@@ -181,7 +193,7 @@ public class Robot extends TimedRobot {
     SmartDashboard.putNumber("Gyro Heading: ", drive.getHeading());
     SmartDashboard.putNumber("Time: ", autoTime);
 
-    if(auton.isFinished())
+    if(autonomousCommand.isFinished())
     {
       drive.SetPower(0, 0);
       autoTime = 0;

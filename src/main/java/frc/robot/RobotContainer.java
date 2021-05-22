@@ -250,10 +250,10 @@ public class RobotContainer{
         10);
 
         //trajectoryconfig parameters are in meters. may need to fix numbers
-        TrajectoryConfig config = 
+        TrajectoryConfig config =
         new TrajectoryConfig(9, 9).setKinematics(Constants.kinematics).addConstraint(autoVoltageConstraint);
 //almost perfect paths: 17, 28 (28 is winning path)
-        String slalomJSON = "paths/output/BounceV10.wpilib.json";//"paths/SlalomV28.wpilib.json";
+        String slalomJSON = "AutoPaths/output/lineTurn2.wpilib.json";//"paths/SlalomV28.wpilib.json";
 
         Trajectory slalomTrajectory = new Trajectory();
         try {

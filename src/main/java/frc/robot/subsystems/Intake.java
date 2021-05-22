@@ -252,7 +252,7 @@ public class Intake extends SubsystemBase {
 
       if(masterShoot.getEncoder().getVelocity() <= (Robot.limelight.
       shootsetPointVariable + 500) && masterShoot.getEncoder().getVelocity() >= (Robot.limelight.shootsetPointVariable - 500)){
-        internalBelt.set(-intakeSpeed);
+        internalBelt.set(intakeSpeed);
         feeder.set(intakeSpeed);
       }
     }
