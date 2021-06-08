@@ -26,6 +26,7 @@ public class AutoShoot extends CommandBase {
   @Override
   public void initialize() {
     Robot.intake.count = 0;
+    Robot.intake.deployPistons(true, false);
   }
 
   // Called every time the scheduler runs while the command is scheduled.
@@ -37,12 +38,13 @@ public class AutoShoot extends CommandBase {
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
+    Robot.intake.runIntakeSystem(0, 0, false, false, false);
   }
 
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    if(Robot.intake.count > 5000){
+    if(Robot.intake.count > 3000){
       return true;
     }
     else return false;

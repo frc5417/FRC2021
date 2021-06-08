@@ -132,12 +132,20 @@ public class Drive extends SubsystemBase {
 
   }
 
-  public CANSparkMax getLeftMotor(){
+  public CANSparkMax getLeftMasterMotor(){
     return driveMasterL;
   }
 
-  public CANSparkMax getRightMotor(){
+  public CANSparkMax getRightMasterMotor(){
     return driveMasterR;
+  }
+
+  public CANSparkMax getLeftSlaveMotor(){
+    return driveSlaveL;
+  }
+
+  public CANSparkMax getRightSlaveMotor(){
+    return driveSlaveR;
   }
 /*
   public double[] getDifDrive(){
@@ -157,17 +165,26 @@ public class Drive extends SubsystemBase {
     return driveOdom.getPoseMeters();
   }
 
-  public void resetOdometry(Pose2d pose){
+  public boolean resetOdometry(Pose2d pose){
     zeroReset();
     gyro.zeroYaw();
     driveOdom.resetPosition(pose, Rotation2d.fromDegrees(getHeading()));
+    return true;
   }
 
   public void tankDriveVolts(double leftVolts, double rightVolts){
     driveMasterL.set(leftVolts / RobotController.getBatteryVoltage());
     driveMasterR.set(-rightVolts / RobotController.getBatteryVoltage()); 
-    SmartDashboard.putNumber("Left Volts Input: ", (leftVolts / RobotController.getBatteryVoltage()));
-    SmartDashboard.putNumber("Right Volts Input: ", (rightVolts / RobotController.getBatteryVoltage()));
+    //SmartDashboard.putNumber("Left Volts Input: ", (leftVolts / RobotController.getBatteryVoltage()));
+    //SmartDashboard.putNumber("Right Volts Input: ", (rightVolts / RobotController.getBatteryVoltage()));
+    drive.feed();
+  }
+
+  public void tankDriveVoltsNerfed(double leftVolts, double rightVolts){
+    driveMasterL.set(.5*leftVolts / RobotController.getBatteryVoltage());
+    driveMasterR.set(-.5*rightVolts / RobotController.getBatteryVoltage()); 
+    //SmartDashboard.putNumber("Left Volts Input: ", (leftVolts / RobotController.getBatteryVoltage()));
+    //SmartDashboard.putNumber("Right Volts Input: ", (rightVolts / RobotController.getBatteryVoltage()));
     drive.feed();
   }
 

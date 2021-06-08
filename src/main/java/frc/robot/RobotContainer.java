@@ -187,11 +187,11 @@ public class RobotContainer{
         return buttonBoard.getRawButtonReleased(16);
     }
 
-    public Command getSimpleAuto(Drive drivetrain){
+    public Command turn180(Drive drivetrain){
             var autoVoltageConstraint = new DifferentialDriveVoltageConstraint(
             new SimpleMotorFeedforward(Constants.kSAuto, Constants.kVAuto, Constants.kAAuto),
             Constants.kinematics,
-            10);
+            7);
     
             //trajectoryconfig parameters are in meters. may need to fix numbers
             TrajectoryConfig config = 
@@ -202,11 +202,12 @@ public class RobotContainer{
                 new Pose2d(0, 0, new Rotation2d(0)),
                 // Pass through these two interior waypoints, making an 's' curve path
                 List.of(
-                    new Translation2d(1, 1),
-                    new Translation2d(2, 0)
+                    new Translation2d(.5, -.5),
+                    new Translation2d(-1, -1)
+                    //new Translation2d(2, 0)
                 ),
                 // End 3 meters straight ahead of where we started, facing forward
-                new Pose2d(3, -1, new Rotation2d(0)),
+                new Pose2d(-2, -1, new Rotation2d(Math.PI)),
                 // Pass config
                 config
             );
@@ -232,7 +233,6 @@ public class RobotContainer{
             drivetrain::tankDriveVolts, 
             drivetrain
             );
-            System.out.println("you have gone past the ramsete command");
     
             // Reset odometry to the starting pose of the trajectory.
             drivetrain.resetOdometry(exampleTrajectory.getInitialPose());
@@ -243,17 +243,68 @@ public class RobotContainer{
 
     }
 
+    public Command autoStraight(Drive drivetrain){
+        var autoVoltageConstraint = new DifferentialDriveVoltageConstraint(
+        new SimpleMotorFeedforward(Constants.kSAuto, Constants.kVAuto, Constants.kAAuto),
+        Constants.kinematics,
+        4.5);
+
+        //trajectoryconfig parameters are in meters. may need to fix numbers
+        TrajectoryConfig config = 
+        new TrajectoryConfig(9, 9).setKinematics(Constants.kinematics).addConstraint(autoVoltageConstraint);
+
+        Trajectory exampleTrajectory = TrajectoryGenerator.generateTrajectory(
+            // Start at the origin facing the +X direction
+            new Pose2d(0, 0, new Rotation2d(Math.PI)),
+            List.of(
+                //new Translation2d(2, 0)
+            ),
+            new Pose2d(-4, 1, new Rotation2d(Math.PI)),
+            // Pass config
+            config
+        );
+
+        drivetrain.resetOdometry(new Pose2d(0, 0, new Rotation2d(Math.PI)));
+
+        RamseteCommand ramseteCommand = new RamseteCommand(
+        exampleTrajectory,
+        drivetrain::getPose,
+        new RamseteController(),
+        new SimpleMotorFeedforward(Constants.kSAuto,
+                                   Constants.kVAuto,
+                                   Constants.kAAuto),
+        Constants.kinematics,
+        //problem: getwheelspeeds and tankdrivevolts need to be functional interfaces
+        drivetrain::getWheelSpeeds,
+        /*drivetrain.getLeftMotor().getPIDController(),
+        drivetrain.getRightMotor().getPIDController(),*/
+        new PIDController(Constants.drivekP, Constants.drivekI, 0),
+        new PIDController(Constants.drivekP, Constants.drivekI, 0),
+        // RamseteCommand passes volts to the callback
+        drivetrain::tankDriveVoltsNerfed, 
+        drivetrain
+        );
+
+        // Reset odometry to the starting pose of the trajectory.
+        drivetrain.resetOdometry(exampleTrajectory.getInitialPose());
+
+        return ramseteCommand;//.andThen(() -> drivetrain.tankDriveVolts(0, 0));
+
+
+}
+
     public Command slalomRun(Drive drivetrain){
         var autoVoltageConstraint = new DifferentialDriveVoltageConstraint(
         new SimpleMotorFeedforward(Constants.kSAuto, Constants.kVAuto, Constants.kAAuto),
         Constants.kinematics,
         10);
 
+
         //trajectoryconfig parameters are in meters. may need to fix numbers
         TrajectoryConfig config =
         new TrajectoryConfig(9, 9).setKinematics(Constants.kinematics).addConstraint(autoVoltageConstraint);
 //almost perfect paths: 17, 28 (28 is winning path)
-        String slalomJSON = "AutoPaths/output/lineTurn2.wpilib.json";//"paths/SlalomV28.wpilib.json";
+        String slalomJSON = "AutoPaths/output/CenterPath.wpilib.json";//"paths/SlalomV28.wpilib.json";
 
         Trajectory slalomTrajectory = new Trajectory();
         try {
@@ -310,7 +361,6 @@ public class RobotContainer{
         drivetrain::tankDriveVolts, 
         drivetrain
         );
-        System.out.println("you have gone past the ramsete command");
 
         // Reset odometry to the starting pose of the trajectory.
         drivetrain.resetOdometry(slalomTrajectory.getInitialPose());

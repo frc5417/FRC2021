@@ -29,7 +29,7 @@ public class Intake extends SubsystemBase {
   //feel free to change these names, they might suck
 
     double intakeSpeed = .5;
-    double rollerSpeed = .5;
+    double rollerSpeed = 1;
     public int count = 0;
     int ballInternalCount = 0;
     boolean ballInternalToggle = true;

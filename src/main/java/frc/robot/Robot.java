@@ -23,6 +23,8 @@ import frc.robot.subsystems.Limelight;
 import frc.robot.RobotContainer;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import edu.wpi.first.wpilibj2.command.ParallelDeadlineGroup;
+import edu.wpi.first.wpilibj2.command.ParallelRaceGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.subsystems.*;
 import frc.robot.commands.*;
@@ -82,13 +84,20 @@ public class Robot extends TimedRobot {
   public static Command turretShoot = new SetTurret(turret);
   //public static TrajectoryFollowing trajectoryFollowing = new TrajectoryFollowing();
   public static Compressor compressor;
-  public static Command auton = robotContainer.slalomRun(drive);
+  //public static Command auton = robotContainer.slalomRun(drive);
   public static Command deployIntakePistons = new DeployIntakePistons(intake);
   public static Timer time = new Timer();
   public static Command autoShoot = new AutoShoot(intake);
   public static Command autoAlign = new AutoAlign(limelight);
+  public static Command uTurn = new RobotContainer().turn180(drive);
+  public static Command autoStraight = new RobotContainer().autoStraight(drive);
+  public static Command autoIntake = new AutoIntake(intake);
+  public static Command resetOdom = new ResetOdom(drive, Math.PI);
+  public static Command smallUTurn = new SmallUTurn(drive);
 
-  public Command autonomousCommand = new SequentialCommandGroup(auton, autoAlign, autoShoot);
+  public Command autonomouspt1 = new SequentialCommandGroup(autoAlign, autoShoot, uTurn);
+  public Command autonomouspt2 = new ParallelRaceGroup(autoStraight, autoIntake);
+  public Command auto = new SequentialCommandGroup(autonomouspt1, resetOdom, autonomouspt2, smallUTurn);
   public int autoTime;
   @Override
   public void robotInit() {
@@ -124,6 +133,12 @@ public class Robot extends TimedRobot {
     limelight.setV(tv);
     stream.setNumber(2);
 
+    System.out.println("pose:" + drive.getPose());
+    System.out.println("wheel speeds: " + drive.getWheelSpeeds());
+    System.out.println("time: " + time.get());
+
+    intake.count += 20;
+
     if(limelight.getY() < 7){
       limelight.shootsetPointVariable = 4100;
     } else if(limelight.getY() < 8){
@@ -149,7 +164,11 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void autonomousInit() {
-    drive.resetOdometry(new Pose2d(0, 0, new Rotation2d()));
+    drive.resetOdometry(new Pose2d(0, 0, new Rotation2d(0)));
+    drive.getLeftMasterMotor().setSmartCurrentLimit(40);
+    drive.getLeftSlaveMotor().setSmartCurrentLimit(40);
+    drive.getRightMasterMotor().setSmartCurrentLimit(40);
+    drive.getRightSlaveMotor().setSmartCurrentLimit(40);
     //drive.zeroReset();
     //drive.gyro.zeroYaw();
     //trajectoryFollowing.zeroHeading();
@@ -172,7 +191,7 @@ public class Robot extends TimedRobot {
     if (autonomousCommand != null) {
         autonomousCommand.schedule();
     }*/
-    autonomousCommand.schedule();
+    auto.schedule();
 
   }
 
@@ -183,20 +202,26 @@ public class Robot extends TimedRobot {
   public void autonomousPeriodic() {
     autoTime += .02;
     CommandScheduler.getInstance().run();
-    System.out.println("pose:" + drive.getPose());
+    /*System.out.println("pose:" + drive.getPose());
     System.out.println("wheel speeds: " + drive.getWheelSpeeds());
-    System.out.println("time: " + time.get());
-    SmartDashboard.putNumber("X-Position: ", drive.getPose().getX());
+    System.out.println("time: " + time.get());*/
+    /*SmartDashboard.putNumber("X-Position: ", drive.getPose().getX());
     SmartDashboard.putNumber("Y-Position: ", drive.getPose().getY());
     SmartDashboard.putNumber("Left Wheel Speed: ", drive.getWheelSpeeds().leftMetersPerSecond);
     SmartDashboard.putNumber("Right Wheel Speed: ", drive.getWheelSpeeds().rightMetersPerSecond);
     SmartDashboard.putNumber("Gyro Heading: ", drive.getHeading());
-    SmartDashboard.putNumber("Time: ", autoTime);
+    SmartDashboard.putNumber("Time: ", autoTime);*/
 
-    if(autonomousCommand.isFinished())
+
+    if(auto.isFinished())
     {
       drive.SetPower(0, 0);
       autoTime = 0;
+
+      drive.getLeftMasterMotor().setSmartCurrentLimit(30);
+      drive.getLeftSlaveMotor().setSmartCurrentLimit(30);
+      drive.getRightMasterMotor().setSmartCurrentLimit(30);
+      drive.getRightSlaveMotor().setSmartCurrentLimit(30);
     }
 
     //timer += 20;
@@ -305,9 +330,9 @@ public class Robot extends TimedRobot {
     
     /*System.out.println("ta:" + ta.getDouble(0.0));  
     System.out.println("log calculator thing" + (-4047.25 + (1699.79*(Math.floor(Math.log(limelight.area)*100)/100))));*/
-    System.out.println("Shoot set point" + limelight.shootsetPointVariable);
+    //System.out.println("Shoot set point" + limelight.shootsetPointVariable);
     //System.out.println(robotContainer.pad.getPOV());
-    intake.count += 20;
+
     //moveTurret.schedule();
     tankDrive.schedule();
     //align.schedule();
