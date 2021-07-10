@@ -44,7 +44,7 @@ public class AutoShoot extends CommandBase {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    if(Robot.intake.count > 3000){
+    if(Robot.intake.count > 5000){
       return true;
     }
     else return false;

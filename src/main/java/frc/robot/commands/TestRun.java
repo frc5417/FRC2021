@@ -3,18 +3,14 @@
 // the WPILib BSD license file in the root directory of this project.
 
 package frc.robot.commands;
-
-import edu.wpi.first.wpilibj2.command.CommandBase;
-
 import frc.robot.subsystems.*;
-import frc.robot.Robot;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 
-public class SmallUTurn extends CommandBase {
+public class TestRun extends CommandBase {
   private final Drive d;
   private double time;
-  /** Creates a new SmallUTurn. */
-  public SmallUTurn(Drive subsystem) {
+  /** Creates a new TestRun. */
+  public TestRun(Drive subsystem) {
     // Use addRequirements() here to declare subsystem dependencies.
     d = subsystem;
     time = 0.0;
@@ -28,19 +24,16 @@ public class SmallUTurn extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    time += 20;
-    d.SetPower(-.5, .5);
+    d.SetPower(1, 1);
   }
 
   // Called once the command ends or is interrupted.
   @Override
-  public void end(boolean interrupted) {
-    time = 0;
-  }
+  public void end(boolean interrupted) {}
 
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return time > 1250;
+    return false;
   }
 }

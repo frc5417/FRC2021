@@ -259,7 +259,7 @@ public class RobotContainer{
             List.of(
                 //new Translation2d(2, 0)
             ),
-            new Pose2d(-4, 1, new Rotation2d(Math.PI)),
+            new Pose2d(-3.5, .5, new Rotation2d(Math.PI)),
             // Pass config
             config
         );
@@ -292,6 +292,56 @@ public class RobotContainer{
 
 
 }
+public Command autoStraight2(Drive drivetrain){
+    var autoVoltageConstraint = new DifferentialDriveVoltageConstraint(
+    new SimpleMotorFeedforward(Constants.kSAuto, Constants.kVAuto, Constants.kAAuto),
+    Constants.kinematics,
+    4.5);
+
+    //trajectoryconfig parameters are in meters. may need to fix numbers
+    TrajectoryConfig config = 
+    new TrajectoryConfig(9, 9).setKinematics(Constants.kinematics).addConstraint(autoVoltageConstraint);
+
+    Trajectory exampleTrajectory = TrajectoryGenerator.generateTrajectory(
+        // Start at the origin facing the +X direction
+        new Pose2d(0, 0, new Rotation2d(0)),
+        List.of(
+            //new Translation2d(2, 0)
+        ),
+        new Pose2d(2, 0, new Rotation2d(0)),
+        // Pass config
+        config
+    );
+
+    drivetrain.resetOdometry(new Pose2d(0, 0, new Rotation2d(0)));
+
+    RamseteCommand ramseteCommand = new RamseteCommand(
+    exampleTrajectory,
+    drivetrain::getPose,
+    new RamseteController(),
+    new SimpleMotorFeedforward(Constants.kSAuto,
+                               Constants.kVAuto,
+                               Constants.kAAuto),
+    Constants.kinematics,
+    //problem: getwheelspeeds and tankdrivevolts need to be functional interfaces
+    drivetrain::getWheelSpeeds,
+    /*drivetrain.getLeftMotor().getPIDController(),
+    drivetrain.getRightMotor().getPIDController(),*/
+    new PIDController(Constants.drivekP, Constants.drivekI, 0),
+    new PIDController(Constants.drivekP, Constants.drivekI, 0),
+    // RamseteCommand passes volts to the callback
+    drivetrain::tankDriveVolts, 
+    drivetrain
+    );
+
+    // Reset odometry to the starting pose of the trajectory.
+    drivetrain.resetOdometry(exampleTrajectory.getInitialPose());
+
+    return ramseteCommand;//.andThen(() -> drivetrain.tankDriveVolts(0, 0));
+
+
+}
+
 
     public Command slalomRun(Drive drivetrain){
         var autoVoltageConstraint = new DifferentialDriveVoltageConstraint(
@@ -370,6 +420,57 @@ public class RobotContainer{
 
 
 }
+/*
+public Command renedevous(Drive drivetrain){
+    var autoVoltageConstraint = new DifferentialDriveVoltageConstraint(
+    new SimpleMotorFeedforward(Constants.kSAuto, Constants.kVAuto, Constants.kAAuto),
+    Constants.kinematics,
+    4.5);
+
+    //trajectoryconfig parameters are in meters. may need to fix numbers
+    TrajectoryConfig config = 
+    new TrajectoryConfig(9, 9).setKinematics(Constants.kinematics).addConstraint(autoVoltageConstraint);
+
+    Trajectory exampleTrajectory = TrajectoryGenerator.generateTrajectory(
+        // Start at the origin facing the +X direction
+        new Pose2d(0, 0, new Rotation2d(0)),
+        List.of(
+            new Translation2d(4.36, .125)
+        ),
+        new Pose2d(5.34, .872, new Rotation2d(-2.740166)),
+        // .4014
+        config
+    );
+
+    drivetrain.resetOdometry(new Pose2d(0, 0, new Rotation2d(0)));
+
+    RamseteCommand ramseteCommand = new RamseteCommand(
+    exampleTrajectory,
+    drivetrain::getPose,
+    new RamseteController(),
+    new SimpleMotorFeedforward(Constants.kSAuto,
+                               Constants.kVAuto,
+                               Constants.kAAuto),
+    Constants.kinematics,
+    //problem: getwheelspeeds and tankdrivevolts need to be functional interfaces
+    drivetrain::getWheelSpeeds,
+    /*drivetrain.getLeftMotor().getPIDController(),
+    drivetrain.getRightMotor().getPIDController(),
+    new PIDController(Constants.drivekP, Constants.drivekI, 0),
+    new PIDController(Constants.drivekP, Constants.drivekI, 0),
+    // RamseteCommand passes volts to the callback
+    drivetrain::tankDriveVolts, 
+    drivetrain
+    );
+
+    // Reset odometry to the starting pose of the trajectory.
+    drivetrain.resetOdometry(exampleTrajectory.getInitialPose());
+
+    return ramseteCommand;//.andThen(() -> drivetrain.tankDriveVolts(0, 0));
+
+
+}*/
+
 
 }
 

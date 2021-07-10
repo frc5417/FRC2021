@@ -27,20 +27,18 @@ private final Intake in;
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    Robot.intake.runIntakeSystem(0, 1, false, false, false);
+    Robot.intake.runIntakeSystem(1, 0, false, false, false);
   }
 
   // Called once the command ends or is interrupted.
   @Override
-  public void end(boolean interrupted) {}
+  public void end(boolean interrupted) {
+    Robot.intake.runIntakeSystem(0, 0, false, false, false);
+  }
 
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    if (Robot.autoStraight.isFinished())
-    {
-      return true;
-    }
-    return false;
+    return Robot.autoStraight.isFinished();
   }
 }

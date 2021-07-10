@@ -4,17 +4,14 @@
 
 package frc.robot.commands;
 
-import edu.wpi.first.wpilibj2.command.CommandBase;
-
 import frc.robot.subsystems.*;
-import frc.robot.Robot;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 
-public class SmallUTurn extends CommandBase {
+public class Reverse extends CommandBase {
   private final Drive d;
   private double time;
-  /** Creates a new SmallUTurn. */
-  public SmallUTurn(Drive subsystem) {
+  /** Creates a new Reverse. */
+  public Reverse(Drive subsystem) {
     // Use addRequirements() here to declare subsystem dependencies.
     d = subsystem;
     time = 0.0;
@@ -29,7 +26,7 @@ public class SmallUTurn extends CommandBase {
   @Override
   public void execute() {
     time += 20;
-    d.SetPower(-.5, .5);
+    d.SetPower(-.5, -.5);
   }
 
   // Called once the command ends or is interrupted.
@@ -41,6 +38,6 @@ public class SmallUTurn extends CommandBase {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return time > 1250;
+    return time > 1000;
   }
 }

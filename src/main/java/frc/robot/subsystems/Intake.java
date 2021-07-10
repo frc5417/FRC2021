@@ -28,14 +28,11 @@ public class Intake extends SubsystemBase {
 
   //feel free to change these names, they might suck
 
-    double intakeSpeed = .5;
-    double rollerSpeed = 1;
+    double intakeSpeed = -.5;
+    double rollerSpeed = -1;
     public int count = 0;
-    int ballInternalCount = 0;
-    boolean ballInternalToggle = true;
-    int ballFeederCount = 0;
-    boolean ballFeederToggle = false;
-    boolean feederFlag = true;
+    int shooterCount = 0;
+    public boolean ballFeederToggle = false;
 
     public CANSparkMax rollerBar;//rollerbar
     public CANSparkMax agitator;               //ask build which ports theyll use
@@ -46,7 +43,7 @@ public class Intake extends SubsystemBase {
     public DigitalInput ballInternalCounter = new DigitalInput(Constants.ballInternalCounterPort);
     public DigitalInput ballFeederCounter = new DigitalInput(Constants.ballFeederCounterPort);
     Solenoid intakeSolenoid = new Solenoid(1);
-    double setPointVariable;
+    public double setPointVariable;
     double setPointConst;
     
     public Intake(){
@@ -57,14 +54,14 @@ public class Intake extends SubsystemBase {
 
       internalBelt.setNeutralMode(NeutralMode.Coast);
       feeder.setNeutralMode(NeutralMode.Coast);
-      //masterShoot.getPIDController().setFF(Constants.shootkFF);
+      masterShoot.getPIDController().setFF(Constants.shootkFF);
       //slaveShoot.getPIDController().setFF(Constants.shootkFF);
       masterShoot.getPIDController().setP(Constants.shootkP);
       //slaveShoot.getPIDController().setP(Constants.shootkP);
       masterShoot.getPIDController().setI(Constants.shootkI);
       //slaveShoot.getPIDController().setI(Constants.shootkI);
       setPointConst = Constants.shootsetPointConstant*Constants.shootMaxRPM;
-      setPointVariable = -Robot.limelight.shootsetPointVariable*Constants.shootMaxRPM;
+      setPointVariable = 4350;
       
     }
     
@@ -87,35 +84,35 @@ public class Intake extends SubsystemBase {
     if(buttonForward != 0 && buttonBackward == 0){
       rollerBar.set(rollerSpeed);
       agitator.set(-rollerSpeed);
-      /*if(ballFeederCounter.get()){
+      /*
+      if(ballFeederCounter.get()){
+        System.out.println("TRUE");
         ballInternalToggle = true;
       }
       if(ballFeederCounter.get() == false){
+        System.out.println("FALSE");
         if(ballInternalToggle){
           internalBelt.set(0);
           ballInternalToggle = false;
         }
       }*/
 
-      //if(ballFeederCounter.get() == false){
+      if(ballFeederToggle == false){
         feeder.set(-intakeSpeed);
         internalBelt.set(-intakeSpeed);
-        //count = 0;
-      //}
-      //else if(ballFeederCounter.get()){
-        //feeder.set(intakeSpeed);
-        //if(count >= 50){
-          //feeder.set(0);
-        //}
-        //internalBelt.set(-intakeSpeed);
-      //}
-
-
-
-
+        if(ballFeederCounter.get() == false){
+          ballFeederToggle = true;
+        }
+      }
+      else if(ballFeederToggle == true)
+      {
+        feeder.set(0);
+        internalBelt.set(-intakeSpeed);
+      }
 
     }    
     else if(buttonBackward != 0 && buttonForward == 0){
+      ballFeederToggle = false;
       rollerBar.set(-rollerSpeed);
       agitator.set(rollerSpeed);
       internalBelt.set(intakeSpeed);
@@ -135,20 +132,22 @@ public class Intake extends SubsystemBase {
       System.out.println(masterShoot.getEncoder().getVelocity() + " Motor ID: 12");
       //System.out.println(slaveShoot.getEncoder().getVelocity() + " Motor ID: 3");
       //System.out.println("boop");
-      masterShoot.getPIDController().setReference(Robot.limelight.shootsetPointVariable*Constants.shootMaxRPM, ControlType.kVelocity);
+      masterShoot.getPIDController().setReference(setPointVariable, ControlType.kVelocity);
       //System.out.println("baap");
       System.out.println(masterShoot.getEncoder().getVelocity() + " Motor ID: 12");
       //slaveShoot.follow(masterShoot);
-
-      if(masterShoot.getEncoder().getVelocity() <= (Robot.limelight.shootsetPointVariable + 100) && masterShoot.getEncoder().getVelocity() >= (Robot.limelight.shootsetPointVariable - 100)){
-        internalBelt.set(intakeSpeed);
-        feeder.set(intakeSpeed);
+      count+=20;
+      if(masterShoot.getEncoder().getVelocity() <= (setPointVariable + 200) && masterShoot.getEncoder().getVelocity() >= (setPointVariable - 200) && count > 2000){
+        ballFeederToggle = false;
+        
+        internalBelt.set(-intakeSpeed);
+        feeder.set(-intakeSpeed);
       }
     }
     else{
       masterShoot.set(0);
       masterShoot.getPIDController().setReference(0, ControlType.kVelocity);
-
+      count = 0;
       //slaveShoot.set(0);
       rollerBar.set(0);
       agitator.set(0);
@@ -165,7 +164,7 @@ public class Intake extends SubsystemBase {
       intakeSolenoid.set(false);
     }
   }
-
+/*
   public void runRollerBar(boolean buttonIn, boolean buttonOut){
     if(buttonIn && buttonOut == false){
       rollerBar.set(intakeSpeed);
@@ -217,7 +216,8 @@ public class Intake extends SubsystemBase {
   public void shoot(boolean button){
     if(button){
       /*masterShoot.set(-1);
-      slaveShoot.set(-1);*/
+      slaveShoot.set(-1);
+
             
       //System.out.println(masterShoot.getEncoder().getVelocity() + " Motor ID: 12 " + masterShoot.getEncoder().getVelocityConversionFactor());
       //System.out.println(slaveShoot.getEncoder().getVelocity() + " Motor ID: 3");
@@ -225,6 +225,7 @@ public class Intake extends SubsystemBase {
       slaveShoot.follow(masterShoot);
 
       if(masterShoot.getEncoder().getVelocity() <= (Constants.shootsetPointConstant + 500) && masterShoot.getEncoder().getVelocity() >= (Constants.shootsetPointConstant - 500)){
+
         internalBelt.set(-intakeSpeed);
         feeder.set(intakeSpeed);
       }
@@ -237,7 +238,7 @@ public class Intake extends SubsystemBase {
       feeder.set(0);
     }
 
-  }
+  }*/
 
   public void autoShoot(boolean flag){
 

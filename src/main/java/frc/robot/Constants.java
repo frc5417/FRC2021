@@ -19,7 +19,7 @@ public class Constants {
     public static final int ballInternalCounterPort = 2;
     public static final int ballFeederCounterPort = 1;
 
-    public static final double Kp = .015; // originally .025
+    public static final double Kp = .025; // originally .025
     public static final double min_command = .05; //real bot .1
     public static final double distance_adjust = .05;
     public static final double ticksPerRev = 12.0; // Without Gear Reduction
@@ -46,11 +46,11 @@ public class Constants {
 
 
     //Shooter Constants
-    public static final double shootkP = .000000035; //9e-20; 
+    public static final double shootkP = .000625; //9e-20; 
     public static final double shootkI = 0; //7e-52;
     public static final double shootkD = 0; 
     public static final double shootkIz = 0; 
-    public static final double shootkFF = 0.000000033; //add 5 
+    public static final double shootkFF = 0.000220; //add 5 
     public static final double shootkMaxOutput = 1; 
     public static final double shootkMinOutput = -1;
     public static final double shootMaxRPM = 5700;

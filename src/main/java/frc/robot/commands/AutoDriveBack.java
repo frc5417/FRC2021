@@ -10,11 +10,11 @@ import frc.robot.subsystems.*;
 import frc.robot.Robot;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 
-public class SmallUTurn extends CommandBase {
+public class AutoDriveBack extends CommandBase {
   private final Drive d;
   private double time;
   /** Creates a new SmallUTurn. */
-  public SmallUTurn(Drive subsystem) {
+  public AutoDriveBack(Drive subsystem) {
     // Use addRequirements() here to declare subsystem dependencies.
     d = subsystem;
     time = 0.0;
@@ -28,8 +28,9 @@ public class SmallUTurn extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
+    System.out.println("you have reached the uturn");
     time += 20;
-    d.SetPower(-.5, .5);
+    d.SetPower(-.6, -.6);
   }
 
   // Called once the command ends or is interrupted.
@@ -41,6 +42,6 @@ public class SmallUTurn extends CommandBase {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return time > 1250;
+    return time > 2000;
   }
 }

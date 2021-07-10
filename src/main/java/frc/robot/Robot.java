@@ -94,16 +94,43 @@ public class Robot extends TimedRobot {
   public static Command autoIntake = new AutoIntake(intake);
   public static Command resetOdom = new ResetOdom(drive, Math.PI);
   public static Command smallUTurn = new SmallUTurn(drive);
+  public static Command autoAlignAgain = new AutoAlign(limelight);
+  public static Command autoShootAgain = new AutoShoot(intake);
+  public static Command straight2 = new RobotContainer().autoStraight2(drive);
+  public static Command resetOdom2 = new ResetOdom(drive, 0);
+  public static Command autoBack = new AutoDriveBack(drive);
+
+  public static Command autoShoot2 = new AutoShoot(intake);
+  public static Command autoAlign2 = new AutoAlign(limelight);
+  public static Command reverse = new Reverse(drive);
+
+  public static Command autoShoot3 = new AutoShoot(intake);
+  public static Command autoAlign3 = new AutoAlign(limelight);
+  public static Command renedevous = new RenedevousJank(drive);
 
   public Command autonomouspt1 = new SequentialCommandGroup(autoAlign, autoShoot, uTurn);
   public Command autonomouspt2 = new ParallelRaceGroup(autoStraight, autoIntake);
-  public Command auto = new SequentialCommandGroup(autonomouspt1, resetOdom, autonomouspt2, smallUTurn);
+  public Command autonomouspt4 = new SequentialCommandGroup(autoAlignAgain, autoShootAgain);
+  public Command auto = new SequentialCommandGroup(autonomouspt1, resetOdom, autonomouspt2, smallUTurn/*, straight2, resetOdom2, autonomouspt4*/);
+
+  public Command auto2 = new SequentialCommandGroup(autoAlign2, autoShoot2, reverse);
+  public Command auto3 = new SequentialCommandGroup(autoAlign3, autoShoot3, renedevous);
+
+
   public int autoTime;
+
+  public SendableChooser<Command> autoSwitcher = new SendableChooser<>();
+
   @Override
   public void robotInit() {
 
     autoTime = 0;
     drive.resetOdometry(new Pose2d(0, 0, new Rotation2d()));
+
+    autoSwitcher.setDefaultOption("Basic Auto", auto2);
+    autoSwitcher.addOption("Trench Auto", auto);
+    autoSwitcher.addOption("Renedevous Auto", auto3);
+    SmartDashboard.putData(autoSwitcher);
     //drive.setDefaultCommand(tankDrive);
     
 
@@ -133,12 +160,14 @@ public class Robot extends TimedRobot {
     limelight.setV(tv);
     stream.setNumber(2);
 
+    /*
     System.out.println("pose:" + drive.getPose());
     System.out.println("wheel speeds: " + drive.getWheelSpeeds());
     System.out.println("time: " + time.get());
+    */
 
     intake.count += 20;
-
+/*
     if(limelight.getY() < 7){
       limelight.shootsetPointVariable = 4100;
     } else if(limelight.getY() < 8){
@@ -148,7 +177,7 @@ public class Robot extends TimedRobot {
     } else {
       limelight.shootsetPointVariable = 3750;
     }
-
+*/
   }
 
   /**
@@ -186,13 +215,16 @@ public class Robot extends TimedRobot {
     //m_autoSelected = kCustomAuto;
 
     /*autonomousCommand = robotContainer.getSimpleAuto(drive);
-    autonomousCommand.initialize();
+    autonomousCommand.initialize();s
 
     if (autonomousCommand != null) {
         autonomousCommand.schedule();
     }*/
-    auto.schedule();
 
+    if (autoSwitcher.getSelected() != null)
+    {
+      autoSwitcher.getSelected().schedule();
+    }
   }
 
   /**
@@ -213,7 +245,7 @@ public class Robot extends TimedRobot {
     SmartDashboard.putNumber("Time: ", autoTime);*/
 
 
-    if(auto.isFinished())
+    if(autoSwitcher.getSelected().isFinished())
     {
       drive.SetPower(0, 0);
       autoTime = 0;
@@ -318,7 +350,6 @@ public class Robot extends TimedRobot {
     //Part 6: MR: 99.0029 ML: -110.4538 SR: 99.0029 SL: -110.4538
     //CommandScheduler.getInstance().run();
     //System.out.println(trajectoryFollowing.getPose());
-    
   }
 
   /**
@@ -345,8 +376,8 @@ public class Robot extends TimedRobot {
     robotContainer.aPad.whileHeld(align);
     //turret.turretLoop();
     //its me again
-    turret.turretSetZero(robotContainer.xButton());
-    turret.moveTurret(robotContainer.pad.getPOV());
+    //turret.turretSetZero(robotContainer.xButton());
+    //turret.moveTurret(robotContainer.pad.getPOV());
     //turret.turretPosMove(robotContainer.yButtonReleased(), robotContainer.bButtonReleased());
     //System.out.println("Selected Sensor Pos: " + turret.getTurretSensorPos());
     //intake.shoot(robotContainer.yButtonM());
@@ -366,20 +397,40 @@ public class Robot extends TimedRobot {
     //System.out.println("Distance: " + limelight.estimateDistance());
     //moveTurret.schedule();
     CommandScheduler.getInstance().run();
-    
+    System.out.println(intake.masterShoot.getEncoder().getVelocity() + " Motor ID: 12");
     if (robotContainer.aButton()){
-      //limelight.shootsetPointVariable = 4100;//(3.16*Math.pow((limelight.getY() - 15), 2) - 21.25*(limelight.getY() - 15) + 4158.86); //-(-4047.25 + (1699.79*(Math.floor(Math.log(limelight.area)*100)/100)));
-      if(limelight.getY() < 7){
+
+      //(3.16*Math.pow((limelight.getY() - 15), 2) - 21.25*(limelight.getY() - 15) + 4158.86); //-(-4047.25 + (1699.79*(Math.floor(Math.log(limelight.area)*100)/100)));
+      /*if(limelight.getY() < 7){
         limelight.shootsetPointVariable = 4100;
       } else if(limelight.getY() < 8){
         limelight.shootsetPointVariable = 4000;
       } else if(limelight.getY() < 11.5){
         limelight.shootsetPointVariable = 3900;
-      } else {
+      } else {x
         limelight.shootsetPointVariable = 3750;
+      }*/
+
+      if(limelight.getta() > 1.1 /*1.5*/){
+        intake.setPointVariable = 3800;
+      } /*else if(limelight.getta() > 1.1){
+        intake.setPointVariable = 3900;
+      }*/ else if(limelight.getta() > 0.7){
+        intake.setPointVariable = 3850;
+      } else if (limelight.getta() > .46){
+        intake.setPointVariable = 4050;
       }
+      else {
+        intake.setPointVariable = 4150;
+      }
+
       ledMode.setNumber(3);
     }
+    else if(robotContainer.bButton())
+    {
+      intake.setPointVariable = 4350;
+    }
+
     else{
       ledMode.setNumber(3);
     }
