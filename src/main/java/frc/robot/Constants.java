@@ -54,8 +54,8 @@ public class Constants {
     public static final double shootkMaxOutput = 1; 
     public static final double shootkMinOutput = -1;
     public static final double shootMaxRPM = 5700;
-    public static final double shootsetPointConstant = -4200; // 3100 in auton
-    public static double shootsetPointVariable = -3100;
+    public static final double shootsetPointConstant = -6000; // 3100 in auton
+    public static double shootsetPointVariable = -6000; //-3100; competition speed should be -3100, change to -6000 for ice
 
     //Turret Constants
     public static final double turretkP = .007;

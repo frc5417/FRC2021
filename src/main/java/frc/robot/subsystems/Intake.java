@@ -61,7 +61,7 @@ public class Intake extends SubsystemBase {
       masterShoot.getPIDController().setI(Constants.shootkI);
       //slaveShoot.getPIDController().setI(Constants.shootkI);
       setPointConst = Constants.shootsetPointConstant*Constants.shootMaxRPM;
-      setPointVariable = 4350;
+      setPointVariable = 6000;
       
     }
     
@@ -137,7 +137,7 @@ public class Intake extends SubsystemBase {
       System.out.println(masterShoot.getEncoder().getVelocity() + " Motor ID: 12");
       //slaveShoot.follow(masterShoot);
       count+=20;
-      if(masterShoot.getEncoder().getVelocity() <= (setPointVariable + 200) && masterShoot.getEncoder().getVelocity() >= (setPointVariable - 200) && count > 2000){
+      if(masterShoot.getEncoder().getVelocity() >= 4500/* && masterShoot.getEncoder().getVelocity() >= (setPointVariable - 200) */&& count > 2000){
         ballFeederToggle = false;
         
         internalBelt.set(-intakeSpeed);

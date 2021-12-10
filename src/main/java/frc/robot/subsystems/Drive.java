@@ -214,21 +214,21 @@ public class Drive extends SubsystemBase {
 
   public void SetPower(double leftPower, double rightPower){
     
-    driveMasterL.setIdleMode(IdleMode.kCoast);
-    driveMasterR.setIdleMode(IdleMode.kCoast);
-    driveSlaveL.setIdleMode(IdleMode.kCoast);
-    driveSlaveR.setIdleMode(IdleMode.kCoast);
+    driveMasterL.setIdleMode(IdleMode.kBrake);
+    driveMasterR.setIdleMode(IdleMode.kBrake);
+    driveSlaveL.setIdleMode(IdleMode.kBrake);
+    driveSlaveR.setIdleMode(IdleMode.kBrake);
 
     driveSlaveL.follow(driveMasterL);
     driveSlaveR.follow(driveMasterR);
 
     if(Math.abs(leftPower) > .15){
-      driveMasterL.set(-leftPower);
+      driveMasterL.set(-leftPower * 0.2);
     } else {
       driveMasterL.set(0);
     }
     if(Math.abs(rightPower) > .15){
-      driveMasterR.set(rightPower);
+      driveMasterR.set(rightPower * 0.2);
     } else {
       driveMasterR.set(0);
     }
