@@ -223,12 +223,12 @@ public class Drive extends SubsystemBase {
     driveSlaveR.follow(driveMasterR);
 
     if(Math.abs(leftPower) > .15){
-      driveMasterL.set(-leftPower * 0.2);
+      driveMasterL.set(-leftPower);
     } else {
       driveMasterL.set(0);
     }
     if(Math.abs(rightPower) > .15){
-      driveMasterR.set(rightPower * 0.2);
+      driveMasterR.set(rightPower);
     } else {
       driveMasterR.set(0);
     }
