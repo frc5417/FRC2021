@@ -138,7 +138,7 @@ public class Intake extends SubsystemBase {
       System.out.println(masterShoot.getEncoder().getVelocity() + " Motor ID: 12");
       //slaveShoot.follow(masterShoot);
       count+=20;
-      if(masterShoot.getEncoder().getVelocity() >= 4500/* && masterShoot.getEncoder().getVelocity() >= (setPointVariable - 200) */&& count > 2000){
+      if(masterShoot.getEncoder().getVelocity() >= 4300/* && masterShoot.getEncoder().getVelocity() >= (setPointVariable - 200) */&& count > 2000){
         ballFeederToggle = false;
         
         internalBelt.set(-intakeSpeed);
